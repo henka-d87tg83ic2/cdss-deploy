@@ -2,31 +2,37 @@
   "cardiac": {
     "mean": -0.3861,
     "sd": 0.8249,
-    "n": 33199
+    "n": 33199,
+    "threshold": -1.2291
   },
   "stroke": {
     "mean": 0.0519,
     "sd": 0.1834,
-    "n": 7615
+    "n": 7615,
+    "threshold": 0.536
   },
   "cancer": {
     "mean": 0.0374,
     "sd": 0.1612,
-    "n": 6513
+    "n": 6513,
+    "threshold": 5.5911
   },
   "pneumonia": {
     "mean": 0.1021,
     "sd": 0.2873,
-    "n": 12154
+    "n": 12154,
+    "threshold": 0.8133
   },
   "fracture": {
     "mean": 0.0595,
     "sd": 0.3156,
-    "n": 4504
+    "n": 4504,
+    "threshold": 8.8973
   },
   "infection": {
     "mean": -0.4445,
     "sd": 0.9642,
-    "n": 21295
+    "n": 21295,
+    "threshold": -1.0206
   }
 }

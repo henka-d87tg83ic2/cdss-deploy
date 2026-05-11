@@ -57,6 +57,7 @@
     .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
     .score { padding: 18px; text-align: center; }
     .score-value { font-size: 44px; font-weight: 900; line-height: 1; }
+    .score-z { margin-top: 8px; color: var(--muted); font-size: 11px; }
     .risk-low { color: var(--green); }
     .risk-mid { color: var(--yellow); }
     .risk-high { color: var(--red); }
@@ -135,6 +136,7 @@
           <div class="meta">Risk score</div>
           <div class="score-value" id="riskScore">--</div>
           <div class="badge" id="riskBand">未判定</div>
+          <div class="score-z" id="riskZ">Z: --</div>
         </div>
         <div class="section">
           <div class="section-title">異常項目</div>
@@ -246,10 +248,10 @@
     const INFECTION_REQUIRED_ITEMS = ["pao2", "fio2", "platelet", "bilirubin_total", "creatinine"];
     const DEFAULT_MASTER = {
       items: [
-        { id: "lactate", name_jp: "乳酸", category_jp: "血液ガス", unit: "mmol/L", ref_low: 0.5, ref_high: 2.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.14, coef_map: {"cardiac": 0.1358, "stroke": 0.0946, "cancer": 0.2493, "pneumonia": 0.1688, "fracture": 0.1048, "infection": 0.1294}, "info": "【乳酸】組織低灌流・嫌気性代謝の指標。>2.0 mmol/L で予後不良。MIMIC-IV Cox β=0.10〜0.25（全6疾患p<0.05）。", high_text: "組織低灌流や重症感染を示唆します。", low_text: "基準下限未満です。" },
-        { id: "albumin", name_jp: "アルブミン", category_jp: "生化学", unit: "g/dL", ref_low: 3.5, ref_high: 5.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: -0.28, coef_map: {"cardiac": -0.5353, "stroke": 0.0123, "cancer": -0.6449, "pneumonia": -0.3386, "fracture": -0.1358, "infection": -0.4559}, coef_ns: ["stroke", "fracture"], "info": "【アルブミン】栄養状態・炎症・予備能の統合指標。<3.5 g/dL で予後不良。全6疾患で死亡リスク増加（HR 0.52〜0.87）。stroke/fracture では p≥0.05（非有意）。", high_text: "脱水などの影響を考慮します。", low_text: "低栄養、炎症、予備能低下を示唆します。" },
-        { id: "nlr", name_jp: "NLR", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 5, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef_map: {"cardiac": 0.0126, "stroke": 0.0181, "cancer": 0.0017, "pneumonia": 0.0094, "fracture": 0.0072, "infection": 0.0041}, coef_ns: ["cancer", "fracture"], "info": "【NLR: 好中球/リンパ球比】全身炎症と免疫抑制のバランス指標。>5 で炎症亢進。cardiac/stroke/pneumonia/infection で p<0.05。cancer/fracture は非有意。" },
-        { id: "sii", name_jp: "SII", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 600, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef_map: {"cardiac": 0.0000, "stroke": 0.0000, "cancer": 0.0000, "pneumonia": 0.0000, "fracture": 0.0000, "infection": 0.0000}, coef_ns: ["cancer", "infection"], "info": "【SII: 全身免疫炎症指数】血小板×好中球/リンパ球。>600 で高リスク。MIMIC-IV解析では全6疾患でβ≈0（予後独立性なし・参考値として表示）。" },
+        { id: "lactate", name_jp: "乳酸", category_jp: "血液ガス", unit: "mmol/L", ref_low: 0.5, ref_high: 2.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.14, coef_map: {"cardiac": 0.1147, "stroke": 0.1669, "cancer": 0.1514, "pneumonia": 0.1975, "fracture": 0.3875, "infection": 0.1401}, "info": "【乳酸】組織低灌流・嫌気性代謝の指標。>2.0 mmol/L で予後不良。MIMIC-IV Cox β=0.10〜0.25（全6疾患p<0.05）。", high_text: "組織低灌流や重症感染を示唆します。", low_text: "基準下限未満です。" },
+        { id: "albumin", name_jp: "アルブミン", category_jp: "生化学", unit: "g/dL", ref_low: 3.5, ref_high: 5.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: -0.28, coef_map: {"cardiac": -0.5515, "stroke": 0.0, "cancer": 0.0, "pneumonia": 0.0, "fracture": 0.0, "infection": -0.6881}, "info": "【アルブミン】栄養状態・炎症・予備能の統合指標。<3.5 g/dL で予後不良。全6疾患で死亡リスク増加（HR 0.52〜0.87）。stroke/fracture では p≥0.05（非有意）。", high_text: "脱水などの影響を考慮します。", low_text: "低栄養、炎症、予備能低下を示唆します。" },
+        { id: "nlr", name_jp: "NLR", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 5, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef_map: {"cardiac": 0.0, "stroke": 0.0, "cancer": 0.0, "pneumonia": 0.0, "fracture": 0.0, "infection": 0.0}, "info": "【NLR: 好中球/リンパ球比】全身炎症と免疫抑制のバランス指標。>5 で炎症亢進。cardiac/stroke/pneumonia/infection で p<0.05。cancer/fracture は非有意。" },
+        { id: "sii", name_jp: "SII", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 600, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef_map: {"cardiac": 0.0, "stroke": 0.0, "cancer": 0.0, "pneumonia": 0.0, "fracture": 0.0, "infection": 0.0}, "info": "【SII: 全身免疫炎症指数】血小板×好中球/リンパ球。>600 で高リスク。MIMIC-IV解析では全6疾患でβ≈0（予後独立性なし・参考値として表示）。" },
         { id: "crp", name_jp: "CRP", category_jp: "炎症", unit: "mg/dL", ref_low: 0, ref_high: 0.3, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.018, "info": "【CRP】急性炎症反応蛋白。感染後6〜8時間で上昇開始、ピーク48〜72h。診断オッズ比5.43（PCT=14.69より低い）。肺炎では4日目50%未満低下→30日死亡リスク増加。", high_text: "炎症反応の上昇を示唆します。", low_text: "基準範囲内です。" },
         { id: "neutrophils", name_jp: "好中球", category_jp: "血算", unit: "/uL", ref_low: 1800, ref_high: 7500, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.00002, high_text: "感染、炎症、ストレス反応を示唆します。", low_text: "骨髄抑制や重症感染を考慮します。" },
         { id: "lymphocytes", name_jp: "リンパ球", category_jp: "血算", unit: "/uL", ref_low: 1000, ref_high: 4000, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: -0.00004, high_text: "免疫反応の亢進を考慮します。", low_text: "免疫低下や炎症性ストレスを示唆します。" },
@@ -283,6 +285,7 @@
     const storeKey = "cdss_single_file_settings_v1";
     const inputValues = {};
     let master = DEFAULT_MASTER;
+    let scoreNorm = {};
     let settings = null;
     let lastResult = null;
     let casePack = [];
@@ -303,6 +306,12 @@
       } catch (_) {
         master = normalizeMaster(DEFAULT_MASTER);
       }
+      try {
+        const normRes = await fetch("cdss/score_norm.json", { cache: "no-store" });
+        if (normRes.ok) scoreNorm = await normRes.json();
+      } catch (e) {
+        console.warn("score_norm.json load failed", e);
+      }
       settings = loadSettings();
       renderAll();
       registerServiceWorker();
@@ -319,6 +328,24 @@
         if (!mergedItems.some((candidate) => itemId(candidate) === id)) mergedItems.push({ ...item, id });
       });
       return { items: mergedItems };
+    }
+
+    function zScore(linearScore, disease) {
+      const norm = scoreNorm[disease];
+      if (!norm || !Number.isFinite(norm.sd) || norm.sd === 0) return null;
+      return (linearScore - norm.mean) / norm.sd;
+    }
+
+    function classifyScore(linearScore, disease) {
+      const z = zScore(linearScore, disease);
+      if (z === null) {
+        if (linearScore > 0.5) return "high";
+        if (linearScore > -0.5) return "mid";
+        return "low";
+      }
+      if (z > 0.5) return "high";
+      if (z > -0.5) return "mid";
+      return "low";
     }
 
     function defaultSettings() {
@@ -723,30 +750,40 @@
     function calculateRisk() {
       const items = visibleItems();
       let linear = -1.1;
+      let normLinear = 0.0;
       items.forEach((item) => {
         const id = itemId(item);
         const value = Number(inputValues[id]);
         if (!Number.isNaN(value)) {
           const c = coefForDisease(item, currentDisease());
           linear += value * c;
+          if (id === "lactate" || id === "albumin") normLinear += value * c;
         }
       });
       const d = derivedValues();
-      if (d.NLR) linear += d.NLR * coefForDisease(markerById("nlr"), currentDisease());
+      if (d.NLR) {
+        const nlrCoef = coefForDisease(markerById("nlr"), currentDisease());
+        linear += d.NLR * nlrCoef;
+        normLinear += d.NLR * nlrCoef;
+      }
       if (d.SII) linear += d.SII * coefForDisease(markerById("sii"), currentDisease());
       if (d.GPS) linear += d.GPS * 0.22;
       if (d.PF_ratio) linear += d.PF_ratio < 300 ? 0.35 : 0;
       const score = Math.round((1 / (1 + Math.exp(-linear))) * 100);
-      lastResult = { score, derived: d, disease: currentDisease() };
+      const disease = currentDisease();
+      lastResult = { score, linear, normLinear, z: zScore(normLinear, disease), band: classifyScore(normLinear, disease), derived: d, disease };
       renderResult();
     }
 
     function renderResult() {
       const score = lastResult?.score;
+      const band = lastResult?.band;
+      const bandClass = band === "high" ? "risk-high" : band === "mid" ? "risk-mid" : "risk-low";
       $("riskScore").textContent = score === undefined ? "--" : String(score);
-      $("riskScore").className = `score-value ${score >= 70 ? "risk-high" : score >= 35 ? "risk-mid" : "risk-low"}`;
-      $("riskBand").textContent = score === undefined ? "未判定" : score >= 70 ? "高リスク" : score >= 35 ? "中等度リスク" : "低リスク";
-      $("riskBand").className = `badge ${score >= 70 ? "danger" : score >= 35 ? "warn" : ""}`;
+      $("riskScore").className = `score-value ${band ? bandClass : ""}`;
+      $("riskBand").textContent = score === undefined ? "未判定" : band === "high" ? "高リスク" : band === "mid" ? "中等度リスク" : "低リスク";
+      $("riskBand").className = `badge ${band === "high" ? "danger" : band === "mid" ? "warn" : ""}`;
+      $("riskZ").textContent = lastResult?.z === null || lastResult?.z === undefined ? "Z: --" : `Z: ${lastResult.z.toFixed(2)}`;
       renderAbnormalList();
       renderDerivedList();
       renderCardiacTimeline();
@@ -1035,9 +1072,9 @@
     function registerServiceWorker() {
       if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
       const sw = `
-        const CACHE = "cdss-html-v1";
+        const CACHE = "cdss-html-v2";
         self.addEventListener("install", (event) => {
-          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "lab_master_v1.json", "${CASES_PUBLIC_URL}"]).catch(() => undefined)));
+          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "lab_master_v1.json", "cdss/score_norm.json", "${CASES_PUBLIC_URL}"]).catch(() => undefined)));
           self.skipWaiting();
         });
         self.addEventListener("activate", (event) => {

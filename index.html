@@ -1,0 +1,1002 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <title>CDSS</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b0f14;
+      --panel: #111827;
+      --panel-2: #16202c;
+      --line: #273241;
+      --text: #e5eef8;
+      --muted: #93a4b7;
+      --blue: #4aa3ff;
+      --green: #2fd17c;
+      --yellow: #f4c542;
+      --red: #ff5c70;
+      --input: #0e1621;
+      --shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; min-height: 100%; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    body { display: flex; justify-content: center; }
+    button, input, select { font: inherit; }
+    .app { width: 100%; max-width: 430px; min-height: 100vh; background: linear-gradient(180deg, #0d131b 0%, #0b0f14 45%); position: relative; padding-bottom: 82px; }
+    header { position: sticky; top: 0; z-index: 5; padding: 14px 16px 10px; background: rgba(11, 15, 20, 0.94); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(39, 50, 65, 0.75); }
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    h1 { margin: 0; font-size: 18px; letter-spacing: 0; }
+    .facility { color: var(--muted); font-size: 12px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    main { padding: 14px 14px 22px; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .section { margin-bottom: 14px; }
+    .section-title { margin: 16px 2px 8px; color: #bfd1e5; font-size: 13px; font-weight: 700; }
+    .panel { background: rgba(17, 24, 39, 0.96); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; }
+    .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 12px; border-top: 1px solid rgba(39, 50, 65, 0.82); }
+    .row:first-child { border-top: 0; }
+    .label { min-width: 0; }
+    .name { font-size: 14px; font-weight: 700; }
+    .meta { margin-top: 3px; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .control { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+    input[type="number"], input[type="text"], select { min-height: 42px; background: var(--input); color: var(--text); border: 1px solid #314052; border-radius: 7px; padding: 9px 10px; outline: 0; }
+    input[type="number"] { width: 96px; text-align: right; }
+    input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--blue); }
+    select { width: 100%; }
+    .unit { min-width: 46px; color: var(--muted); font-size: 12px; }
+    .abn-low input, .abn-high input { border-color: var(--yellow); background: rgba(244, 197, 66, 0.10); }
+    .abn-high .unit, .abn-low .unit { color: var(--yellow); }
+    .derived { color: var(--green); }
+    .button { width: 100%; min-height: 48px; border: 0; border-radius: 8px; color: #06101a; background: var(--blue); font-weight: 800; }
+    .button.secondary { background: #233143; color: var(--text); border: 1px solid #34465c; }
+    .button.danger { background: #3a1e27; color: #ffd5dc; border: 1px solid #6b2c3b; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+    .score { padding: 18px; text-align: center; }
+    .score-value { font-size: 44px; font-weight: 900; line-height: 1; }
+    .risk-low { color: var(--green); }
+    .risk-mid { color: var(--yellow); }
+    .risk-high { color: var(--red); }
+    .badge { display: inline-flex; align-items: center; min-height: 24px; padding: 3px 8px; border-radius: 999px; background: #233143; color: #c8d7e8; font-size: 12px; font-weight: 700; }
+    .badge.warn { background: rgba(244, 197, 66, 0.15); color: #ffe08a; }
+    .badge.danger { background: rgba(255, 92, 112, 0.15); color: #ffb3bf; }
+    .empty { color: var(--muted); padding: 16px; text-align: center; font-size: 13px; }
+    .settings-row { grid-template-columns: auto 1fr; }
+    .settings-grid { display: grid; grid-template-columns: 1fr 82px 82px; gap: 8px; margin-top: 8px; }
+    .settings-grid input { width: 100%; min-height: 38px; }
+    .tier { color: var(--muted); font-size: 11px; }
+    nav { position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 430px; display: grid; grid-template-columns: repeat(3, 1fr); background: rgba(13, 19, 27, 0.96); border-top: 1px solid var(--line); padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); z-index: 10; }
+    .tab { min-height: 48px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font-weight: 800; }
+    .tab.active { background: #1c2a39; color: var(--text); }
+    .info-link { cursor: pointer; text-decoration: underline dotted; text-underline-offset: 3px; }
+    .ns-note { color: var(--yellow); }
+    .modal-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 18px; background: rgba(0, 0, 0, 0.62); }
+    .modal-backdrop[hidden] { display: none; }
+    .modal { width: 100%; max-width: 392px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); overflow: hidden; }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 14px 10px; border-bottom: 1px solid var(--line); }
+    .modal-title { font-size: 16px; font-weight: 800; }
+    .modal-close { width: 36px; height: 36px; border: 0; border-radius: 8px; background: #233143; color: var(--text); font-size: 22px; line-height: 1; }
+    .modal-body { padding: 12px 14px 16px; }
+    .info-row { margin-top: 10px; }
+    .info-row:first-child { margin-top: 0; }
+    .info-label { color: #bfd1e5; font-size: 12px; font-weight: 800; }
+    .info-text { margin-top: 3px; color: var(--text); font-size: 14px; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="topline">
+        <h1>CDSS予後リスク判定</h1>
+        <div class="facility" id="facilityLabel"></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="page active" id="page-input">
+        <div class="section">
+          <div class="section-title">疾患</div>
+          <select id="diseaseSelect"></select>
+        </div>
+        <div class="section" id="cancerSubtypeSection" hidden>
+          <div class="section-title">がん種</div>
+          <select id="cancerSubtypeSelect"></select>
+        </div>
+        <div id="inputGroups"></div>
+        <button class="button" id="judgeBtn">判定</button>
+      </section>
+
+      <section class="page" id="page-result">
+        <div class="panel score">
+          <div class="meta">Risk score</div>
+          <div class="score-value" id="riskScore">--</div>
+          <div class="badge" id="riskBand">未判定</div>
+        </div>
+        <div class="section">
+          <div class="section-title">異常項目</div>
+          <div class="panel" id="abnormalList"><div class="empty">入力後に表示されます</div></div>
+        </div>
+        <div class="section">
+          <div class="section-title">派生指標</div>
+          <div class="panel" id="derivedList"><div class="empty">算出可能な指標がありません</div></div>
+        </div>
+        <div class="section" id="cardiacTimelineSection" hidden>
+          <div class="section-title">心筋マーカー推移</div>
+          <div class="panel" id="cardiacTimeline"></div>
+        </div>
+        <div class="section" id="strokeAnnotationSection" hidden>
+          <div class="section-title">脳卒中リスク注記</div>
+          <div class="panel" id="strokeAnnotation"></div>
+        </div>
+        <div class="section" id="pneumoniaAnnotationSection" hidden>
+          <div class="section-title">肺炎マーカー注記</div>
+          <div class="panel" id="pneumoniaAnnotation"></div>
+        </div>
+        <div class="section" id="fractureAnnotationSection" hidden>
+          <div class="section-title">骨折マーカー注記</div>
+          <div class="panel" id="fractureAnnotation"></div>
+        </div>
+        <div class="section" id="infectionAnnotationSection" hidden>
+          <div class="section-title">感染症マーカー注記</div>
+          <div class="panel" id="infectionAnnotation"></div>
+        </div>
+        <div class="section" id="cancerAnnotationSection" hidden>
+          <div class="section-title">がんマーカー注記</div>
+          <div class="panel" id="cancerAnnotation"></div>
+        </div>
+        <button class="button secondary" id="shareBtn">共有</button>
+      </section>
+
+      <section class="page" id="page-settings">
+        <div class="section">
+          <div class="section-title">施設</div>
+          <div class="panel row">
+            <div class="label">
+              <div class="name">施設名</div>
+              <div class="meta">端末内に保存されます</div>
+            </div>
+            <input type="text" id="facilityInput" placeholder="施設名">
+          </div>
+        </div>
+        <div id="settingsList"></div>
+        <div class="actions">
+          <button class="button" id="saveSettingsBtn">保存</button>
+          <button class="button danger" id="resetSettingsBtn">リセット</button>
+        </div>
+      </section>
+    </main>
+
+    <nav>
+      <button class="tab active" data-page="input">入力</button>
+      <button class="tab" data-page="result">結果</button>
+      <button class="tab" data-page="settings">設定</button>
+    </nav>
+  </div>
+  <div class="modal-backdrop" id="infoModal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+      <div class="modal-head">
+        <div class="modal-title" id="infoModalTitle"></div>
+        <button class="modal-close" id="infoModalClose" type="button" aria-label="閉じる">×</button>
+      </div>
+      <div class="modal-body" id="infoModalBody"></div>
+    </div>
+  </div>
+
+  <script>
+    const DISEASES = [
+      ["cardiac", "心臓病"],
+      ["stroke", "脳卒中"],
+      ["cancer", "がん"],
+      ["pneumonia", "肺炎"],
+      ["fracture", "骨折"],
+      ["infection", "感染症"]
+    ];
+    const CANCER_SUBTYPES = [
+      ["colorectal", "大腸癌"],
+      ["lung", "肺癌"],
+      ["breast", "乳癌"],
+      ["prostate", "前立腺癌"],
+      ["liver", "肝癌"],
+      ["other", "その他"]
+    ];
+    const CANCER_SUBTYPE_ITEMS = {
+      colorectal: ["cea", "ca199", "crp", "albumin"],
+      lung: ["cea", "crp", "albumin"],
+      breast: ["cea", "ca2729", "crp", "albumin"],
+      prostate: ["psa", "prostatic_acid_phosphatase", "crp", "albumin"],
+      liver: ["afp_maternal_screen", "cea", "crp", "albumin"],
+      other: ["cea", "crp", "albumin"]
+    };
+    const FRACTURE_PANEL_ITEMS = ["platelet", "neutrophils", "lymphocytes", "albumin", "pth", "alp", "d_dimer"];
+    const INFECTION_REQUIRED_ITEMS = ["pao2", "fio2", "platelet", "bilirubin_total", "creatinine"];
+    const DEFAULT_MASTER = {
+      items: [
+        { id: "lactate", name_jp: "乳酸", category_jp: "血液ガス", unit: "mmol/L", ref_low: 0.5, ref_high: 2.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.14, coef_map: {"cardiac": 0.1358, "stroke": 0.0946, "cancer": 0.2493, "pneumonia": 0.1688, "fracture": 0.1048, "infection": 0.1294}, "info": "【乳酸】組織低灌流・嫌気性代謝の指標。>2.0 mmol/L で予後不良。MIMIC-IV Cox β=0.10〜0.25（全6疾患p<0.05）。", high_text: "組織低灌流や重症感染を示唆します。", low_text: "基準下限未満です。" },
+        { id: "albumin", name_jp: "アルブミン", category_jp: "生化学", unit: "g/dL", ref_low: 3.5, ref_high: 5.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: -0.28, coef_map: {"cardiac": -0.5353, "stroke": 0.0123, "cancer": -0.6449, "pneumonia": -0.3386, "fracture": -0.1358, "infection": -0.4559}, coef_ns: ["stroke", "fracture"], "info": "【アルブミン】栄養状態・炎症・予備能の統合指標。<3.5 g/dL で予後不良。全6疾患で死亡リスク増加（HR 0.52〜0.87）。stroke/fracture では p≥0.05（非有意）。", high_text: "脱水などの影響を考慮します。", low_text: "低栄養、炎症、予備能低下を示唆します。" },
+        { id: "nlr", name_jp: "NLR", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 5, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef_map: {"cardiac": 0.0126, "stroke": 0.0181, "cancer": 0.0017, "pneumonia": 0.0094, "fracture": 0.0072, "infection": 0.0041}, coef_ns: ["cancer", "fracture"], "info": "【NLR: 好中球/リンパ球比】全身炎症と免疫抑制のバランス指標。>5 で炎症亢進。cardiac/stroke/pneumonia/infection で p<0.05。cancer/fracture は非有意。" },
+        { id: "sii", name_jp: "SII", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 600, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef_map: {"cardiac": 0.0000, "stroke": 0.0000, "cancer": 0.0000, "pneumonia": 0.0000, "fracture": 0.0000, "infection": 0.0000}, coef_ns: ["cancer", "infection"], "info": "【SII: 全身免疫炎症指数】血小板×好中球/リンパ球。>600 で高リスク。MIMIC-IV解析では全6疾患でβ≈0（予後独立性なし・参考値として表示）。" },
+        { id: "crp", name_jp: "CRP", category_jp: "炎症", unit: "mg/dL", ref_low: 0, ref_high: 0.3, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.018, "info": "【CRP】急性炎症反応蛋白。感染後6〜8時間で上昇開始、ピーク48〜72h。診断オッズ比5.43（PCT=14.69より低い）。肺炎では4日目50%未満低下→30日死亡リスク増加。", high_text: "炎症反応の上昇を示唆します。", low_text: "基準範囲内です。" },
+        { id: "neutrophils", name_jp: "好中球", category_jp: "血算", unit: "/uL", ref_low: 1800, ref_high: 7500, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.00002, high_text: "感染、炎症、ストレス反応を示唆します。", low_text: "骨髄抑制や重症感染を考慮します。" },
+        { id: "lymphocytes", name_jp: "リンパ球", category_jp: "血算", unit: "/uL", ref_low: 1000, ref_high: 4000, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: -0.00004, high_text: "免疫反応の亢進を考慮します。", low_text: "免疫低下や炎症性ストレスを示唆します。" },
+        { id: "platelet", name_jp: "血小板", category_jp: "血算", unit: "10^3/uL", ref_low: 150, ref_high: 350, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.001, high_text: "炎症や凝固亢進を考慮します。", low_text: "出血リスクや消費性低下を考慮します。" },
+        { id: "homocysteine", itemid: 50945, label: "Homocysteine", name_jp: "Homocysteine", category_jp: "脳卒中リスク", unit: "μmol/L", ref_low: 0, ref_high: 15, tier: 1, enabled: true, diseases: ["stroke"], coef: 0.035, "info": "【Homocysteine】動脈硬化・脳卒中独立リスク因子。>15 μmol/L。葉酸・B12代謝障害で上昇。脳卒中一次予防の介入ターゲット。", high_text: "脳卒中独立リスク因子の上昇を示唆します。", low_text: "基準範囲内です。" },
+        { id: "il6", itemid: 50953, label: "IL-6", name_jp: "IL-6", category_jp: "脳卒中リスク", unit: "pg/mL", ref_low: 0, ref_high: 7, tier: 1, enabled: true, diseases: ["stroke"], coef: 0.025, "info": "【IL-6】急性期炎症サイトカイン。>7 pg/mL。脳卒中重症度(NIHSS)・予後と相関。特に心原性塞栓で高値。TNFαはMIMIC-IV未収録。", high_text: "脳卒中重症度や予後不良との関連を考慮します。", low_text: "基準範囲内です。" },
+        { id: "ldl_calculated", itemid: 50905, label: "Cholesterol, LDL, Calculated", name_jp: "Cholesterol, LDL, Calculated", category_jp: "脂質", unit: "mg/dL", ref_low: 0, ref_high: 120, tier: 1, enabled: true, diseases: ["stroke"], coef: 0.004, high_text: "動脈硬化性リスクの上昇を示唆します。", low_text: "基準範囲内です。" },
+        { id: "ldl_measured", itemid: 50906, label: "Cholesterol, LDL, Measured", name_jp: "Cholesterol, LDL, Measured", category_jp: "脂質", unit: "mg/dL", ref_low: 0, ref_high: 120, tier: 1, enabled: true, diseases: ["stroke"], coef: 0.004, high_text: "動脈硬化性リスクの上昇を示唆します。", low_text: "基準範囲内です。" },
+        { id: "ntprobnp", itemid: 50963, label: "NTproBNP", name_jp: "NTproBNP", category_jp: "心筋マーカー", unit: "pg/mL", ref_low: 0, ref_high: 125, tier: 1, enabled: true, diseases: ["cardiac"], coef: 0.00008, "info": "【NT-proBNP】心室壁ストレスマーカー。カットオフ>125 pg/mL（JCS 2023）。BNPはMIMIC-IV v3.1未収録のためNT-proBNP（itemid=50963）を使用。", high_text: "心負荷や心不全増悪を示唆します。", low_text: "基準範囲内です。" },
+        { id: "myoglobin", itemid: 51695, label: "Myoglobin", name_jp: "Myoglobin", category_jp: "心筋マーカー", unit: "ng/mL", ref_low: 0, ref_high: 85, tier: 1, enabled: true, diseases: ["cardiac"], coef: 0.002, high_text: "早期心筋傷害マーカーの上昇を示唆します。", low_text: "基準範囲内です。" },
+        { id: "ck", itemid: 50910, label: "Creatine Kinase (CK)", name_jp: "Creatine Kinase (CK)", category_jp: "心筋マーカー", unit: "IU/L", ref_low: 30, ref_high: 200, tier: 1, enabled: true, diseases: ["cardiac"], coef: 0.0008, high_text: "筋傷害または心筋傷害を示唆します。", low_text: "基準下限未満です。" },
+        { id: "ckmb", itemid: 50911, label: "Creatine Kinase, MB Isoenzyme", name_jp: "Creatine Kinase, MB Isoenzyme", category_jp: "心筋マーカー", unit: "IU/L", ref_low: 0, ref_high: 5, tier: 1, enabled: true, diseases: ["cardiac"], coef: 0.035, high_text: "心筋傷害を示唆します。", low_text: "基準範囲内です。" },
+        { id: "ckmb_index", itemid: 50908, label: "CK-MB Index", name_jp: "CK-MB Index", category_jp: "心筋マーカー", unit: "%", ref_low: 0, ref_high: 3.0, tier: 1, enabled: true, diseases: ["cardiac"], coef: 0.04, high_text: "心筋由来CK-MB上昇を示唆します。", low_text: "基準範囲内です。" },
+        { id: "troponin_i", itemid: 51002, label: "Troponin I", name_jp: "Troponin I", category_jp: "心筋マーカー", unit: "ng/mL", ref_low: 0, ref_high: 0.04, tier: 1, enabled: true, diseases: ["cardiac"], coef: 0.12, "info": "【Troponin I】心筋細胞傷害の特異的マーカー。>0.04 ng/mL で陽性。MIMIC-IV itemid=51002（52642は重複・不使用）。心筋梗塞診断・リスク層別化の標準。", high_text: "心筋傷害を示唆します。", low_text: "基準範囲内です。" },
+        { id: "pth", itemid: 50965, label: "Parathyroid Hormone", name_jp: "Parathyroid Hormone", category_jp: "骨代謝", unit: "pg/mL", ref_low: 15, ref_high: 65, tier: 1, enabled: true, diseases: ["fracture"], high_text: "骨代謝異常や副甲状腺機能亢進を考慮します。", low_text: "基準下限未満です。" },
+        { id: "alp", itemid: 50863, label: "Alkaline Phosphatase", name_jp: "Alkaline Phosphatase", category_jp: "骨代謝", unit: "IU/L", ref_low: 30, ref_high: 120, tier: 1, enabled: true, diseases: ["fracture"], high_text: "骨代謝亢進や胆道系疾患を考慮します。", low_text: "基準下限未満です。" },
+        { id: "d_dimer", label: "D-Dimer", name_jp: "D-Dimer", category_jp: "凝固", unit: "μg/mL", ref_low: 0, ref_high: 0.5, tier: 1, enabled: true, diseases: ["fracture"], high_text: "術後DVT・PEの監視を強化します。", low_text: "基準範囲内です。" },
+        { id: "psa", itemid: 50974, label: "Prostate Specific Antigen", name_jp: "Prostate Specific Antigen", category_jp: "腫瘍マーカー", unit: "ng/mL", ref_low: 0, ref_high: 4.0, tier: 1, enabled: true, diseases: ["cancer"], high_text: "前立腺癌関連マーカーの上昇を考慮します。", low_text: "基準範囲内です。" },
+        { id: "ca2729", itemid: 50898, label: "Cancer Antigen 27.29", name_jp: "Cancer Antigen 27.29", category_jp: "腫瘍マーカー", unit: "U/mL", ref_low: 0, ref_high: 38, tier: 1, enabled: true, diseases: ["cancer"], high_text: "乳癌関連マーカーの上昇を考慮します。", low_text: "基準範囲内です。" },
+        { id: "prostatic_acid_phosphatase", itemid: 53135, label: "Acid Phosphatase, Prostatic Fraction", name_jp: "Acid Phosphatase, Prostatic Fraction", category_jp: "腫瘍マーカー", unit: "U/L", ref_low: 0, ref_high: 3.5, tier: 1, enabled: true, diseases: ["cancer"], high_text: "前立腺癌関連マーカーの上昇を考慮します。", low_text: "基準範囲内です。" },
+        { id: "cea", itemid: 50900, label: "Carcinoembryonic Antigen (CEA)", name_jp: "Carcinoembryonic Antigen (CEA)", category_jp: "腫瘍マーカー", unit: "ng/mL", ref_low: 0, ref_high: 5.0, tier: 1, enabled: true, diseases: ["cancer"], high_text: "CEA高値です。腫瘍活動性や炎症性背景を考慮します。", low_text: "基準範囲内です。" },
+        { id: "ca199", itemid: 51579, label: "CA 19-9", name_jp: "CA 19-9", category_jp: "腫瘍マーカー", unit: "U/mL", ref_low: 0, ref_high: 37, tier: 1, enabled: true, diseases: ["cancer"], high_text: "CA19-9高値です。消化器癌・胆膵系疾患を考慮します。", low_text: "基準範囲内です。" },
+        { id: "afp_maternal_screen", itemid: 50860, label: "AFP, Maternal Screen", name_jp: "AFP, Maternal Screen", category_jp: "腫瘍マーカー", unit: "ng/mL", ref_low: 0, ref_high: 10, tier: 2, enabled: true, diseases: ["cancer"], high_text: "肝癌関連マーカーの上昇を考慮します。", low_text: "基準範囲内です。" },
+        { id: "pao2", name_jp: "PaO2", category_jp: "呼吸", unit: "mmHg", ref_low: 80, ref_high: 100, tier: 2, enabled: false, diseases: ["pneumonia", "infection", "cardiac"], coef: -0.002, high_text: "酸素化は保たれています。", low_text: "酸素化低下を示唆します。" },
+        { id: "fio2", name_jp: "FiO2", category_jp: "呼吸", unit: "%", ref_low: 21, ref_high: 100, tier: 2, enabled: false, diseases: ["pneumonia", "infection", "cardiac"], coef: 0.004, high_text: "高濃度酸素投与を要している可能性があります。", low_text: "入力値を確認してください。" },
+        { id: "bilirubin_total", itemid: 50885, label: "Bilirubin, Total", name_jp: "Bilirubin, Total", category_jp: "SOFA", unit: "mg/dL", ref_low: 0, ref_high: 1.2, tier: 1, enabled: true, diseases: ["infection"], high_text: "SOFA肝機能スコア上昇を考慮します。", low_text: "基準範囲内です。" },
+        { id: "creatinine", name_jp: "クレアチニン", category_jp: "腎機能", unit: "mg/dL", ref_low: 0.6, ref_high: 1.1, tier: 2, enabled: false, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.09, high_text: "腎機能低下を示唆します。", low_text: "筋肉量低下などを考慮します。" }
+      ]
+    };
+
+    const storeKey = "cdss_single_file_settings_v1";
+    const inputValues = {};
+    let master = DEFAULT_MASTER;
+    let settings = null;
+    let lastResult = null;
+
+    const $ = (id) => document.getElementById(id);
+    const itemId = (item) => item.id || item.key || item.name || item.name_jp;
+    const itemName = (item) => item.name_jp || item.label_jp || item.label || item.id;
+    const itemCategory = (item) => item.category_jp || item.category || "その他";
+    const itemUnit = (item) => item.unit || "";
+    const itemTier = (item) => Number(item.tier || 1);
+
+    async function loadMaster() {
+      try {
+        const res = await fetch("lab_master_v1.json", { cache: "no-store" });
+        if (res.ok) master = normalizeMaster(await res.json());
+      } catch (_) {
+        master = normalizeMaster(DEFAULT_MASTER);
+      }
+      settings = loadSettings();
+      renderAll();
+      registerServiceWorker();
+    }
+
+    function normalizeMaster(raw) {
+      const items = Array.isArray(raw) ? raw : (raw.items || raw.labs || []);
+      const defaults = new Map(DEFAULT_MASTER.items.map((item) => [itemId(item), item]));
+      const mergedItems = items.map((item) => {
+        const id = itemId(item);
+        return { ...(defaults.get(id) || {}), ...item, id };
+      });
+      defaults.forEach((item, id) => {
+        if (!mergedItems.some((candidate) => itemId(candidate) === id)) mergedItems.push({ ...item, id });
+      });
+      return { items: mergedItems };
+    }
+
+    function defaultSettings() {
+      const perItem = {};
+      master.items.forEach((item) => {
+        if (item.derived) return;
+        const id = itemId(item);
+        perItem[id] = {
+          enabled: item.enabled !== false,
+          ref_low: item.ref_low ?? item.low ?? "",
+          ref_high: item.ref_high ?? item.high ?? ""
+        };
+      });
+      return { facility: "", perItem };
+    }
+
+    function loadSettings() {
+      const base = defaultSettings();
+      try {
+        const saved = JSON.parse(localStorage.getItem(storeKey) || "{}");
+        return {
+          facility: saved.facility || "",
+          perItem: { ...base.perItem, ...(saved.perItem || {}) }
+        };
+      } catch (_) {
+        return base;
+      }
+    }
+
+    function saveSettings() {
+      localStorage.setItem(storeKey, JSON.stringify(settings));
+      renderAll();
+    }
+
+    function currentDisease() {
+      return $("diseaseSelect").value || "cardiac";
+    }
+
+    function currentCancerSubtype() {
+      return $("cancerSubtypeSelect")?.value || "colorectal";
+    }
+
+    function visibleItems() {
+      const disease = currentDisease();
+      const cancerAllowed = disease === "cancer" ? CANCER_SUBTYPE_ITEMS[currentCancerSubtype()] || CANCER_SUBTYPE_ITEMS.other : null;
+      return master.items.filter((item) => {
+        if (item.derived) return false;
+        const id = itemId(item);
+        const forced = (disease === "fracture" && FRACTURE_PANEL_ITEMS.includes(id)) || (disease === "infection" && INFECTION_REQUIRED_ITEMS.includes(id));
+        const enabled = settings.perItem[id]?.enabled || forced;
+        const diseases = item.diseases || item.disease || [];
+        const diseaseOk = !Array.isArray(diseases) || diseases.length === 0 || diseases.includes(disease);
+        const subtypeOk = !cancerAllowed || cancerAllowed.includes(id);
+        const fractureOk = disease !== "fracture" || FRACTURE_PANEL_ITEMS.includes(id);
+        return enabled && diseaseOk && subtypeOk && fractureOk;
+      });
+    }
+
+    function getRef(item, kind) {
+      const id = itemId(item);
+      const value = settings.perItem[id]?.[kind];
+      return value === "" || value === null || value === undefined ? null : Number(value);
+    }
+
+    function isAbnormal(item, value) {
+      if (value === null || value === undefined || value === "") return "";
+      const n = Number(value);
+      const low = getRef(item, "ref_low");
+      const high = getRef(item, "ref_high");
+      if (low !== null && n < low) return "low";
+      if (high !== null && n > high) return "high";
+      return "";
+    }
+
+    function derivedValues() {
+      const n = Number(inputValues.neutrophils);
+      const l = Number(inputValues.lymphocytes);
+      const p = Number(inputValues.platelet);
+      const crp = Number(inputValues.crp);
+      const alb = Number(inputValues.albumin);
+      const pao2 = Number(inputValues.pao2);
+      const fio2 = Number(inputValues.fio2);
+      const sofa = sofaScore();
+      const out = {};
+      if (n > 0 && l > 0) out.NLR = n / l;
+      if (n > 0 && l > 0 && p > 0) out.SII = (p * n) / l;
+      if (!Number.isNaN(crp) && !Number.isNaN(alb)) out.GPS = (crp > 1 ? 1 : 0) + (alb < 3.5 ? 1 : 0);
+      if (pao2 > 0 && fio2 > 0) out.PF_ratio = pao2 / (fio2 > 1 ? fio2 / 100 : fio2);
+      if (currentDisease() === "infection" && sofa !== null) out.SOFA = sofa;
+      return out;
+    }
+
+    function markerById(id) {
+      return master.items.find((item) => itemId(item) === id);
+    }
+
+    function coefForDisease(item, disease) {
+      if (item?.coef_map && item.coef_map[disease] !== undefined) return Number(item.coef_map[disease]);
+      return Number(item?.coef || 0.01);
+    }
+
+    function markerInfoLink(item, className = "") {
+      const id = itemId(item);
+      const name = escapeHtml(itemName(item));
+      if (!item.info) return name;
+      return `<span class="info-link ${escapeAttr(className)}" data-info-id="${escapeAttr(id)}" tabindex="0" role="button">${name}</span>`;
+    }
+
+    function coefNsNote(item, disease = currentDisease()) {
+      return item?.coef_ns?.includes(disease) ? `<div class="meta ns-note">※ この疾患では統計的非有意（p≥0.05）</div>` : "";
+    }
+
+    function sofaScore() {
+      if (currentDisease() !== "infection") return null;
+      const pf = pfRatio();
+      const platelet = Number(inputValues.platelet);
+      const bilirubin = Number(inputValues.bilirubin_total);
+      const creatinine = Number(inputValues.creatinine);
+      const gcs = Number(inputValues.gcs);
+      const map = Number(inputValues.map);
+      const cardioSupport = inputValues.vasopressor_support || "none";
+      const scores = [
+        sofaRespScore(pf),
+        sofaPlateletScore(platelet),
+        sofaBilirubinScore(bilirubin),
+        sofaCreatinineScore(creatinine),
+        sofaGcsScore(gcs),
+        sofaCardioScore(map, cardioSupport)
+      ].filter((score) => score !== null);
+      return scores.length ? scores.reduce((sum, score) => sum + score, 0) : null;
+    }
+
+    function pfRatio() {
+      const pao2 = Number(inputValues.pao2);
+      const fio2 = Number(inputValues.fio2);
+      if (!(pao2 > 0 && fio2 > 0)) return null;
+      return pao2 / (fio2 > 1 ? fio2 / 100 : fio2);
+    }
+
+    function sofaRespScore(pf) {
+      if (pf === null) return null;
+      if (pf >= 400) return 0;
+      if (pf >= 300) return 1;
+      if (pf >= 200) return 2;
+      if (pf >= 100) return 3;
+      return 4;
+    }
+
+    function sofaPlateletScore(value) {
+      if (!Number.isFinite(value)) return null;
+      if (value >= 150) return 0;
+      if (value >= 100) return 1;
+      if (value >= 50) return 2;
+      if (value >= 20) return 3;
+      return 4;
+    }
+
+    function sofaBilirubinScore(value) {
+      if (!Number.isFinite(value)) return null;
+      if (value < 1.2) return 0;
+      if (value < 2.0) return 1;
+      if (value < 6.0) return 2;
+      if (value < 12.0) return 3;
+      return 4;
+    }
+
+    function sofaCreatinineScore(value) {
+      if (!Number.isFinite(value)) return null;
+      if (value < 1.2) return 0;
+      if (value < 2.0) return 1;
+      if (value < 3.5) return 2;
+      if (value < 5.0) return 3;
+      return 4;
+    }
+
+    function sofaGcsScore(value) {
+      if (!Number.isFinite(value)) return null;
+      if (value >= 15) return 0;
+      if (value >= 13) return 1;
+      if (value >= 10) return 2;
+      if (value >= 6) return 3;
+      return 4;
+    }
+
+    function sofaCardioScore(map, support) {
+      if (support === "high") return 4;
+      if (support === "mid") return 3;
+      if (support === "low") return 2;
+      if (!Number.isFinite(map)) return null;
+      return map >= 70 ? 0 : 1;
+    }
+
+    function renderAll() {
+      renderHeader();
+      renderDiseaseSelect();
+      renderCancerSubtypeSelect();
+      renderInput();
+      renderSettings();
+      renderResult();
+    }
+
+    function renderHeader() {
+      $("facilityLabel").textContent = settings?.facility || "未設定";
+      $("facilityInput").value = settings?.facility || "";
+    }
+
+    function renderDiseaseSelect() {
+      const selected = $("diseaseSelect").value || "cardiac";
+      $("diseaseSelect").innerHTML = DISEASES.map(([id, name]) => `<option value="${id}">${name}</option>`).join("");
+      $("diseaseSelect").value = selected;
+    }
+
+    function renderCancerSubtypeSelect() {
+      const show = currentDisease() === "cancer";
+      $("cancerSubtypeSection").hidden = !show;
+      if (!show) return;
+      const selected = currentCancerSubtype();
+      $("cancerSubtypeSelect").innerHTML = CANCER_SUBTYPES.map(([id, name]) => `<option value="${id}">${name}</option>`).join("");
+      $("cancerSubtypeSelect").value = CANCER_SUBTYPE_ITEMS[selected] ? selected : "colorectal";
+    }
+
+    function renderInput() {
+      const groups = {};
+      visibleItems().forEach((item) => {
+        const category = itemCategory(item);
+        groups[category] = groups[category] || [];
+        groups[category].push(item);
+      });
+      $("inputGroups").innerHTML = Object.entries(groups).map(([category, items]) => `
+        <div class="section">
+          <div class="section-title">${escapeHtml(category)}</div>
+          <div class="panel">
+            ${items.map(renderInputRow).join("")}
+          </div>
+        </div>
+      `).join("") + renderPneumoniaCrpInput() + renderSofaInput();
+      renderPneumoniaCrpChange();
+      Object.values(derivedValues()).length;
+    }
+
+    function renderInputRow(item) {
+      const id = itemId(item);
+      const value = inputValues[id] ?? "";
+      const abn = isAbnormal(item, value);
+      const low = getRef(item, "ref_low");
+      const high = getRef(item, "ref_high");
+      return `
+        <div class="row ${abn ? `abn-${abn}` : ""}">
+          <div class="label">
+            <div class="name">${markerInfoLink(item)}</div>
+            <div class="meta">基準 ${low ?? "-"} - ${high ?? "-"} ${escapeHtml(itemUnit(item))}</div>
+          </div>
+          <div class="control">
+            <input type="number" inputmode="decimal" step="any" data-input-id="${escapeAttr(id)}" value="${escapeAttr(value)}">
+            <span class="unit">${escapeHtml(itemUnit(item))}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function updateInputState(input) {
+      const item = master.items.find((candidate) => itemId(candidate) === input.dataset.inputId);
+      if (!item) return;
+      const row = input.closest(".row");
+      if (!row) return;
+      row.classList.remove("abn-low", "abn-high");
+      const abn = isAbnormal(item, input.value);
+      if (abn) row.classList.add(`abn-${abn}`);
+    }
+
+    function crpChangeRate() {
+      if (inputValues.crp === "" || inputValues.crp === undefined || inputValues.previous_crp === "" || inputValues.previous_crp === undefined) return null;
+      const current = Number(inputValues.crp);
+      const previous = Number(inputValues.previous_crp);
+      if (!Number.isFinite(current) || !Number.isFinite(previous) || previous <= 0) return null;
+      return ((current - previous) / previous) * 100;
+    }
+
+    function renderPneumoniaCrpInput() {
+      if (currentDisease() !== "pneumonia") return "";
+      const value = inputValues.previous_crp ?? "";
+      return `
+        <div class="section">
+          <div class="section-title">CRP推移</div>
+          <div class="panel">
+            <div class="row">
+              <div class="label">
+                <div class="name">前回CRP（治療開始時）</div>
+                <div class="meta" id="crpChangeRate">CRP変化率: --</div>
+              </div>
+              <div class="control">
+                <input type="number" inputmode="decimal" step="any" data-input-id="previous_crp" value="${escapeAttr(value)}">
+                <span class="unit">mg/dL</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPneumoniaCrpChange() {
+      const target = $("crpChangeRate");
+      if (!target) return;
+      const rate = crpChangeRate();
+      target.textContent = rate === null
+        ? "CRP変化率: --"
+        : `CRP変化率: ${rate.toFixed(0)}% (4日目50%未満低下→30日死亡リスク増)`;
+    }
+
+    function renderSofaInput() {
+      if (currentDisease() !== "infection") return "";
+      const gcs = inputValues.gcs ?? "";
+      const map = inputValues.map ?? "";
+      const support = inputValues.vasopressor_support || "none";
+      return `
+        <div class="section">
+          <div class="section-title">SOFA臨床入力</div>
+          <div class="panel">
+            <div class="row">
+              <div class="label">
+                <div class="name">GCS</div>
+                <div class="meta">3-15</div>
+              </div>
+              <div class="control">
+                <input type="number" inputmode="decimal" min="3" max="15" step="1" data-input-id="gcs" value="${escapeAttr(gcs)}">
+                <span class="unit">点</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">
+                <div class="name">MAP</div>
+                <div class="meta">昇圧薬なしの場合に使用</div>
+              </div>
+              <div class="control">
+                <input type="number" inputmode="decimal" step="any" data-input-id="map" value="${escapeAttr(map)}">
+                <span class="unit">mmHg</span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="label">
+                <div class="name">昇圧薬使用</div>
+                <div class="meta">使用時はSOFA循環スコアを選択</div>
+              </div>
+              <div class="control">
+                <input type="checkbox" data-input-id="vasopressor_used" ${support !== "none" ? "checked" : ""}>
+              </div>
+            </div>
+            <div class="row" id="vasopressorSupportRow" ${support === "none" ? "hidden" : ""}>
+              <div class="label">
+                <div class="name">昇圧薬カテゴリ</div>
+                <div class="meta">dopamine/NE/epi用</div>
+              </div>
+              <select data-input-id="vasopressor_support">
+                <option value="low" ${support === "low" ? "selected" : ""}>dopa≤5（2点）</option>
+                <option value="mid" ${support === "mid" ? "selected" : ""}>dopa&gt;5（3点）</option>
+                <option value="high" ${support === "high" ? "selected" : ""}>NE/epi&gt;0.1（4点）</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSettings() {
+      const groups = {};
+      master.items.forEach((item) => {
+        if (item.derived) return;
+        const category = itemCategory(item);
+        groups[category] = groups[category] || [];
+        groups[category].push(item);
+      });
+      $("settingsList").innerHTML = Object.entries(groups).map(([category, items]) => `
+        <div class="section">
+          <div class="section-title">${escapeHtml(category)}</div>
+          <div class="panel">${items.map(renderSettingsRow).join("")}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderSettingsRow(item) {
+      const id = itemId(item);
+      const s = settings.perItem[id] || {};
+      return `
+        <div class="row settings-row">
+          <input type="checkbox" data-setting-enable="${escapeAttr(id)}" ${s.enabled ? "checked" : ""}>
+          <div class="label">
+            <div class="name">${escapeHtml(itemName(item))} <span class="tier">Tier${itemTier(item)}</span></div>
+            <div class="settings-grid">
+              <input type="number" step="any" data-setting-low="${escapeAttr(id)}" value="${escapeAttr(s.ref_low ?? "")}" placeholder="下限">
+              <input type="number" step="any" data-setting-high="${escapeAttr(id)}" value="${escapeAttr(s.ref_high ?? "")}" placeholder="上限">
+              <div class="meta">${escapeHtml(itemUnit(item))}</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function calculateRisk() {
+      const items = visibleItems();
+      let linear = -1.1;
+      items.forEach((item) => {
+        const id = itemId(item);
+        const value = Number(inputValues[id]);
+        if (!Number.isNaN(value)) {
+          const c = coefForDisease(item, currentDisease());
+          linear += value * c;
+        }
+      });
+      const d = derivedValues();
+      if (d.NLR) linear += d.NLR * coefForDisease(markerById("nlr"), currentDisease());
+      if (d.SII) linear += d.SII * coefForDisease(markerById("sii"), currentDisease());
+      if (d.GPS) linear += d.GPS * 0.22;
+      if (d.PF_ratio) linear += d.PF_ratio < 300 ? 0.35 : 0;
+      const score = Math.round((1 / (1 + Math.exp(-linear))) * 100);
+      lastResult = { score, derived: d, disease: currentDisease() };
+      renderResult();
+    }
+
+    function renderResult() {
+      const score = lastResult?.score;
+      $("riskScore").textContent = score === undefined ? "--" : String(score);
+      $("riskScore").className = `score-value ${score >= 70 ? "risk-high" : score >= 35 ? "risk-mid" : "risk-low"}`;
+      $("riskBand").textContent = score === undefined ? "未判定" : score >= 70 ? "高リスク" : score >= 35 ? "中等度リスク" : "低リスク";
+      $("riskBand").className = `badge ${score >= 70 ? "danger" : score >= 35 ? "warn" : ""}`;
+      renderAbnormalList();
+      renderDerivedList();
+      renderCardiacTimeline();
+      renderStrokeAnnotation();
+      renderPneumoniaAnnotation();
+      renderFractureAnnotation();
+      renderInfectionAnnotation();
+      renderCancerAnnotation();
+    }
+
+    function renderAbnormalList() {
+      const rows = visibleItems().filter((item) => isAbnormal(item, inputValues[itemId(item)])).map((item) => {
+        const id = itemId(item);
+        const state = isAbnormal(item, inputValues[id]);
+        const text = state === "high" ? (item.high_text || "基準上限を超えています。") : (item.low_text || "基準下限を下回っています。");
+        return `
+          <div class="row">
+            <div class="label">
+              <div class="name">${markerInfoLink(item)}</div>
+              <div class="meta">${escapeHtml(text)}</div>
+              ${coefNsNote(item)}
+            </div>
+            <span class="badge ${state === "high" ? "danger" : "warn"}">${escapeHtml(String(inputValues[id]))} ${escapeHtml(itemUnit(item))}</span>
+          </div>
+        `;
+      });
+      $("abnormalList").innerHTML = rows.length ? rows.join("") : `<div class="empty">異常項目はありません</div>`;
+    }
+
+    function renderDerivedList() {
+      const d = lastResult?.derived || derivedValues();
+      const rows = [];
+      if (d.NLR !== undefined) rows.push(derivedRow("NLR", d.NLR, d.NLR > 5 ? "高値: 炎症性ストレス上昇" : "閾値5未満", markerById("nlr")));
+      if (d.SII !== undefined) rows.push(derivedRow("SII", d.SII, d.SII > 1000 ? "高値: 全身性炎症上昇" : "閾値1000未満", markerById("sii")));
+      if (d.GPS !== undefined) rows.push(derivedRow("GPS", d.GPS, d.GPS >= 1 ? "炎症/低栄養リスクあり" : "0点"));
+      if (d.PF_ratio !== undefined) rows.push(derivedRow("PF ratio", d.PF_ratio, d.PF_ratio < 300 ? "酸素化低下" : "300以上"));
+      if (d.SOFA !== undefined) rows.push(derivedRow("SOFA", d.SOFA, `SOFA: ${d.SOFA}点 (Sepsis-3: ≥2点かつ感染疑いで敗血症診断)`));
+      $("derivedList").innerHTML = rows.length ? rows.join("") : `<div class="empty">算出可能な指標がありません</div>`;
+    }
+
+    function renderCardiacTimeline() {
+      const show = currentDisease() === "cardiac";
+      $("cardiacTimelineSection").hidden = !show;
+      if (!show) return;
+      $("cardiacTimeline").innerHTML = `
+        <div class="row">
+          <div class="label">
+            <div class="name">Myoglobin↑: 発症1-3h / CK-MB↑: 発症3-6h / Troponin↑: 発症3-6h（24h持続）</div>
+            <div class="meta">H-FABPはMIMIC-IV未収録のため非対応</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStrokeAnnotation() {
+      const show = currentDisease() === "stroke";
+      $("strokeAnnotationSection").hidden = !show;
+      if (!show) return;
+      $("strokeAnnotation").innerHTML = `
+        <div class="row">
+          <div class="label">
+            <div class="name">IL-6↑: NIHSS重症度・予後不良と相関（心原性塞栓で特に有意）</div>
+            <div class="meta">TNFα・MDA-LDL: MIMIC-IV未収録（エビデンスあり・測定推奨）</div>
+            <div class="meta">Homocysteine↑(&gt;15μmol/L): 脳卒中独立リスク因子</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPneumoniaAnnotation() {
+      const show = currentDisease() === "pneumonia";
+      $("pneumoniaAnnotationSection").hidden = !show;
+      if (!show) return;
+      $("pneumoniaAnnotation").innerHTML = `
+        <div class="row">
+          <div class="label">
+            <div class="name">間質性肺炎マーカー（MIMIC-IV未収録・測定推奨）:</div>
+            <div class="meta">SP-D↑(&gt;110 ng/mL): 予後不良・急性増悪リスク / KL-6↑(&gt;1014 U/mL): 活動性高い</div>
+            <div class="meta">SP-A↑(&gt;43.8 ng/mL): GGO病変反映 / SAA: CRP変化率と並行モニタリング推奨</div>
+            <div class="meta">PCT中止基準: &lt;0.5 ng/mL かつ Δ低下&lt;10%で抗菌薬中止を検討</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFractureAnnotation() {
+      const show = currentDisease() === "fracture";
+      $("fractureAnnotationSection").hidden = !show;
+      if (!show) return;
+      $("fractureAnnotation").innerHTML = `
+        <div class="row">
+          <div class="label">
+            <div class="name">骨代謝マーカー（Osteocalcin/NTx/CTx/RANKL）: MIMIC-IV未収録・測定推奨</div>
+            <div class="meta">D-Dimer↑: 術後DVT・PE監視 / SII+Albumin: 術後合併症予測</div>
+            <div class="meta">時間軸ゼロ: 手術開始時刻（入院時刻ではない）</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderInfectionAnnotation() {
+      const show = currentDisease() === "infection";
+      $("infectionAnnotationSection").hidden = !show;
+      if (!show) return;
+      $("infectionAnnotation").innerHTML = `
+        <div class="row">
+          <div class="label">
+            <div class="name">PCT中止基準: &lt;0.5 ng/mL / SOFA≥2+感染疑い → 敗血症（Sepsis-3）</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCancerAnnotation() {
+      const show = currentDisease() === "cancer";
+      $("cancerAnnotationSection").hidden = !show;
+      if (!show) return;
+      $("cancerAnnotation").innerHTML = `
+        <div class="row">
+          <div class="label">
+            <div class="name">NSE・ProGRP（肺小細胞）/ PIVKA-II・AFP-L3（肝）/ CA15-3（乳）/ CA125（卵巣）/ CYFRA（肺扁平）: MIMIC-IV未収録・測定推奨</div>
+            <div class="meta">GPS=2: 予後不良高リスク / GPS=0: 良好</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function derivedRow(name, value, note, item = null) {
+      return `
+        <div class="row">
+          <div class="label">
+            <div class="name derived">${item ? markerInfoLink(item, "derived") : escapeHtml(name)}</div>
+            <div class="meta">${escapeHtml(note)}</div>
+            ${coefNsNote(item)}
+          </div>
+          <span class="badge">${Number(value).toFixed(name === "GPS" || name === "SOFA" ? 0 : 1)}</span>
+        </div>
+      `;
+    }
+
+    function shareText() {
+      const disease = DISEASES.find(([id]) => id === currentDisease())?.[1] || currentDisease();
+      const subtype = CANCER_SUBTYPES.find(([id]) => id === currentCancerSubtype())?.[1] || currentCancerSubtype();
+      const score = lastResult?.score ?? "--";
+      const d = lastResult?.derived || {};
+      return [
+        `CDSS予後リスク判定`,
+        `施設: ${settings.facility || "未設定"}`,
+        `疾患: ${disease}`,
+        ...(currentDisease() === "cancer" ? [`がん種: ${subtype}`] : []),
+        `Risk score: ${score}`,
+        ...Object.entries(d).map(([k, v]) => `${k}: ${Number(v).toFixed(k === "GPS" || k === "SOFA" ? 0 : 1)}`)
+      ].join("\n");
+    }
+
+    function showInfoModal(id) {
+      const item = markerById(id);
+      if (!item?.info) return;
+      $("infoModalTitle").textContent = itemName(item);
+      if (typeof item.info === "string") {
+        $("infoModalBody").innerHTML = `<div class="info-text">${escapeHtml(item.info)}</div>`;
+      } else {
+        $("infoModalBody").innerHTML = [
+          ["意味", item.info.meaning],
+          ["基準値・カットオフ", item.info.cutoff],
+          ["エビデンス", item.info.evidence],
+          ["MIMIC-IV収録状況", item.info.mimic]
+        ].map(([label, text]) => `
+          <div class="info-row">
+            <div class="info-label">${escapeHtml(label)}</div>
+            <div class="info-text">${escapeHtml(text || "-")}</div>
+          </div>
+        `).join("");
+      }
+      $("infoModal").hidden = false;
+    }
+
+    function closeInfoModal() {
+      $("infoModal").hidden = true;
+    }
+
+    function switchPage(page) {
+      document.querySelectorAll(".page").forEach((el) => el.classList.toggle("active", el.id === `page-${page}`));
+      document.querySelectorAll(".tab").forEach((el) => el.classList.toggle("active", el.dataset.page === page));
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHtml(value);
+    }
+
+    function registerServiceWorker() {
+      if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
+      const sw = `
+        const CACHE = "cdss-html-v1";
+        self.addEventListener("install", (event) => {
+          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "lab_master_v1.json"]).catch(() => undefined)));
+          self.skipWaiting();
+        });
+        self.addEventListener("activate", (event) => {
+          event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))));
+          self.clients.claim();
+        });
+        self.addEventListener("fetch", (event) => {
+          if (event.request.method !== "GET") return;
+          event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
+            const clone = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(event.request, clone));
+            return response;
+          }).catch(() => cached)));
+        });
+      `;
+      const url = URL.createObjectURL(new Blob([sw], { type: "text/javascript" }));
+      navigator.serviceWorker.register(url).catch(() => undefined);
+    }
+
+    document.addEventListener("input", (event) => {
+      const inputId = event.target.dataset.inputId;
+      if (inputId) {
+        if (inputId === "vasopressor_used") {
+          inputValues.vasopressor_support = event.target.checked ? (inputValues.vasopressor_support === "none" ? "low" : inputValues.vasopressor_support || "low") : "none";
+          renderInput();
+          renderDerivedList();
+          return;
+        }
+        inputValues[inputId] = event.target.value;
+        updateInputState(event.target);
+        renderPneumoniaCrpChange();
+        renderDerivedList();
+      }
+      const lowId = event.target.dataset.settingLow;
+      if (lowId) settings.perItem[lowId].ref_low = event.target.value;
+      const highId = event.target.dataset.settingHigh;
+      if (highId) settings.perItem[highId].ref_high = event.target.value;
+      if (event.target.id === "facilityInput") {
+        settings.facility = event.target.value;
+        renderHeader();
+      }
+    });
+
+    document.addEventListener("click", (event) => {
+      const infoTarget = event.target.closest("[data-info-id]");
+      if (infoTarget) showInfoModal(infoTarget.dataset.infoId);
+      if (event.target.id === "infoModal" || event.target.id === "infoModalClose") closeInfoModal();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeInfoModal();
+      if ((event.key === "Enter" || event.key === " ") && event.target.dataset.infoId) {
+        event.preventDefault();
+        showInfoModal(event.target.dataset.infoId);
+      }
+    });
+
+    document.addEventListener("change", (event) => {
+      if (event.target.id === "diseaseSelect") renderAll();
+      if (event.target.id === "cancerSubtypeSelect") renderAll();
+      const inputId = event.target.dataset.inputId;
+      if (inputId === "vasopressor_support") {
+        inputValues.vasopressor_support = event.target.value;
+        renderDerivedList();
+      }
+      const enableId = event.target.dataset.settingEnable;
+      if (enableId) settings.perItem[enableId].enabled = event.target.checked;
+    });
+
+    document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click", () => switchPage(tab.dataset.page)));
+    $("judgeBtn").addEventListener("click", () => { calculateRisk(); switchPage("result"); });
+    $("saveSettingsBtn").addEventListener("click", saveSettings);
+    $("resetSettingsBtn").addEventListener("click", () => {
+      localStorage.removeItem(storeKey);
+      settings = defaultSettings();
+      renderAll();
+    });
+    $("shareBtn").addEventListener("click", async () => {
+      const text = shareText();
+      try {
+        await navigator.clipboard.writeText(text);
+        $("shareBtn").textContent = "コピーしました";
+        setTimeout(() => $("shareBtn").textContent = "共有", 1200);
+      } catch (_) {
+        alert(text);
+      }
+    });
+
+    loadMaster();
+  </script>
+</body>
+</html>

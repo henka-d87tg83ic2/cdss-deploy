@@ -1,0 +1,702 @@
+[
+  {
+    "case_id": "CASE-cardiac-001",
+    "disease": "cardiac",
+    "age_group": "70s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.8,
+      "albumin": 2.6,
+      "crp": 23.6,
+      "nlr": 4.96,
+      "sii": 515.73,
+      "ntprobnp": null,
+      "troponin_i": 0.02,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.2,
+      "wbc": 12.1
+    },
+    "clinical_note": "胸痛・冷汗で救急搬送。CRP上昇あり。"
+  },
+  {
+    "case_id": "CASE-cardiac-002",
+    "disease": "cardiac",
+    "age_group": "60s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.8,
+      "albumin": 2.7,
+      "crp": 220.8,
+      "nlr": 10.0,
+      "sii": 3490.0,
+      "ntprobnp": 2572.0,
+      "troponin_i": 0.07,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 3.5,
+      "wbc": 21.2
+    },
+    "clinical_note": "胸痛・呼吸困難で救急搬送。Troponin I上昇あり。"
+  },
+  {
+    "case_id": "CASE-cardiac-003",
+    "disease": "cardiac",
+    "age_group": "70s",
+    "sex": "F",
+    "labs": {
+      "lactate": 4.3,
+      "albumin": 3.7,
+      "crp": 11.5,
+      "nlr": 8.16,
+      "sii": 1420.7,
+      "ntprobnp": null,
+      "troponin_i": 0.09,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 7.4,
+      "wbc": 8.4
+    },
+    "clinical_note": "胸痛・冷汗で救急搬送。Troponin I上昇あり。"
+  },
+  {
+    "case_id": "CASE-cardiac-004",
+    "disease": "cardiac",
+    "age_group": "70s",
+    "sex": "M",
+    "labs": {
+      "lactate": 2.7,
+      "albumin": 3.1,
+      "crp": 41.6,
+      "nlr": 21.8,
+      "sii": 2049.2,
+      "ntprobnp": null,
+      "troponin_i": 0.05,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 2.9,
+      "wbc": 9.9
+    },
+    "clinical_note": "胸痛・冷汗で救急搬送。Troponin I上昇あり。"
+  },
+  {
+    "case_id": "CASE-cardiac-005",
+    "disease": "cardiac",
+    "age_group": "70s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.7,
+      "albumin": 2.2,
+      "crp": 269.7,
+      "nlr": 10.88,
+      "sii": 1457.25,
+      "ntprobnp": 9604.0,
+      "troponin_i": 0.05,
+      "il6": 153.0,
+      "homocysteine": null,
+      "creatinine": 2.8,
+      "wbc": 14.6
+    },
+    "clinical_note": "胸痛・呼吸困難で救急搬送。Troponin I上昇あり。"
+  },
+  {
+    "case_id": "CASE-cardiac-006",
+    "disease": "cardiac",
+    "age_group": "70s",
+    "sex": "M",
+    "labs": {
+      "lactate": 1.1,
+      "albumin": 3.4,
+      "crp": 81.2,
+      "nlr": 15.18,
+      "sii": 2747.91,
+      "ntprobnp": null,
+      "troponin_i": 1.21,
+      "il6": 241.0,
+      "homocysteine": null,
+      "creatinine": 1.0,
+      "wbc": 11.9
+    },
+    "clinical_note": "胸痛・冷汗で救急搬送。Troponin I上昇あり。"
+  },
+  {
+    "case_id": "CASE-cardiac-007",
+    "disease": "cardiac",
+    "age_group": "60s",
+    "sex": "F",
+    "labs": {
+      "lactate": 9.0,
+      "albumin": 3.8,
+      "crp": 90.7,
+      "nlr": 9.23,
+      "sii": 2547.45,
+      "ntprobnp": 365.0,
+      "troponin_i": 0.06,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.0,
+      "wbc": 9.7
+    },
+    "clinical_note": "胸痛・呼吸困難で救急搬送。Troponin I上昇あり。"
+  },
+  {
+    "case_id": "CASE-cardiac-008",
+    "disease": "cardiac",
+    "age_group": "60s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.7,
+      "albumin": 3.8,
+      "crp": 1.6,
+      "nlr": 2.05,
+      "sii": 486.34,
+      "ntprobnp": null,
+      "troponin_i": 0.38,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 0.9,
+      "wbc": 6.2
+    },
+    "clinical_note": "胸痛・冷汗で救急搬送。Troponin I上昇あり。"
+  },
+  {
+    "case_id": "CASE-cardiac-009",
+    "disease": "cardiac",
+    "age_group": "70s",
+    "sex": "F",
+    "labs": {
+      "lactate": 2.1,
+      "albumin": 3.1,
+      "crp": 141.0,
+      "nlr": 9.1,
+      "sii": 3037.98,
+      "ntprobnp": 3120.0,
+      "troponin_i": 0.23,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 0.6,
+      "wbc": 20.4
+    },
+    "clinical_note": "胸痛・呼吸困難で救急搬送。Troponin I上昇あり。"
+  },
+  {
+    "case_id": "CASE-cardiac-010",
+    "disease": "cardiac",
+    "age_group": "40s",
+    "sex": "M",
+    "labs": {
+      "lactate": 1.0,
+      "albumin": 2.2,
+      "crp": 196.1,
+      "nlr": 24.67,
+      "sii": 10039.33,
+      "ntprobnp": 1307.0,
+      "troponin_i": 0.09,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 7.3,
+      "wbc": 17.5
+    },
+    "clinical_note": "胸痛・呼吸困難で救急搬送。Troponin I上昇あり。"
+  },
+  {
+    "case_id": "CASE-stroke-001",
+    "disease": "stroke",
+    "age_group": "50s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.1,
+      "albumin": 2.5,
+      "crp": 223.9,
+      "nlr": 5.22,
+      "sii": 589.53,
+      "ntprobnp": null,
+      "troponin_i": 0.01,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.3,
+      "wbc": 5.7
+    },
+    "clinical_note": "左片麻痺で発症。NIHSS推定18。"
+  },
+  {
+    "case_id": "CASE-stroke-002",
+    "disease": "stroke",
+    "age_group": "70s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.3,
+      "albumin": 2.5,
+      "crp": 225.8,
+      "nlr": 18.2,
+      "sii": 546.0,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 3.8,
+      "wbc": 10.6
+    },
+    "clinical_note": "左片麻痺で発症。NIHSS推定18。"
+  },
+  {
+    "case_id": "CASE-stroke-003",
+    "disease": "stroke",
+    "age_group": "60s",
+    "sex": "M",
+    "labs": {
+      "lactate": 0.9,
+      "albumin": 1.9,
+      "crp": 203.6,
+      "nlr": 4.53,
+      "sii": 1160.53,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 5.5,
+      "wbc": 6.6
+    },
+    "clinical_note": "左片麻痺で発症。NIHSS推定18。"
+  },
+  {
+    "case_id": "CASE-stroke-004",
+    "disease": "stroke",
+    "age_group": "70s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.5,
+      "albumin": 2.7,
+      "crp": 175.4,
+      "nlr": 6.33,
+      "sii": 1482.0,
+      "ntprobnp": 16122.0,
+      "troponin_i": 0.23,
+      "il6": 211.0,
+      "homocysteine": null,
+      "creatinine": 0.4,
+      "wbc": 12.0
+    },
+    "clinical_note": "右片麻痺で発症。NIHSS推定18。"
+  },
+  {
+    "case_id": "CASE-stroke-005",
+    "disease": "stroke",
+    "age_group": "60s",
+    "sex": "M",
+    "labs": {
+      "lactate": 1.4,
+      "albumin": 3.9,
+      "crp": 56.2,
+      "nlr": 0.43,
+      "sii": 89.57,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.3,
+      "wbc": 46.4
+    },
+    "clinical_note": "右片麻痺で発症。NIHSS推定4。"
+  },
+  {
+    "case_id": "CASE-cancer-001",
+    "disease": "cancer",
+    "age_group": "40s",
+    "sex": "F",
+    "labs": {
+      "lactate": 6.2,
+      "albumin": 2.2,
+      "crp": 69.9,
+      "nlr": 14.0,
+      "sii": 742.0,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": 153.0,
+      "homocysteine": null,
+      "creatinine": 0.9,
+      "wbc": 3.6
+    },
+    "clinical_note": "大腸癌の既往。呼吸困難で入院。"
+  },
+  {
+    "case_id": "CASE-cancer-002",
+    "disease": "cancer",
+    "age_group": "60s",
+    "sex": "M",
+    "labs": {
+      "lactate": 3.9,
+      "albumin": 1.8,
+      "crp": 273.0,
+      "nlr": 48.5,
+      "sii": 21437.0,
+      "ntprobnp": 1518.0,
+      "troponin_i": null,
+      "il6": 152.0,
+      "homocysteine": null,
+      "creatinine": 0.9,
+      "wbc": 59.1
+    },
+    "clinical_note": "肺癌の既往。呼吸困難で入院。"
+  },
+  {
+    "case_id": "CASE-cancer-003",
+    "disease": "cancer",
+    "age_group": "60s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.2,
+      "albumin": 3.0,
+      "crp": 33.4,
+      "nlr": 8.52,
+      "sii": 2784.66,
+      "ntprobnp": null,
+      "troponin_i": 0.02,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 7.1,
+      "wbc": 13.5
+    },
+    "clinical_note": "肺癌の既往。全身倦怠感で入院。"
+  },
+  {
+    "case_id": "CASE-cancer-004",
+    "disease": "cancer",
+    "age_group": "80s",
+    "sex": "F",
+    "labs": {
+      "lactate": 2.2,
+      "albumin": 2.9,
+      "crp": 270.8,
+      "nlr": 4.42,
+      "sii": 2197.77,
+      "ntprobnp": null,
+      "troponin_i": 0.03,
+      "il6": 218.0,
+      "homocysteine": null,
+      "creatinine": 1.3,
+      "wbc": 9.1
+    },
+    "clinical_note": "大腸癌の既往。呼吸困難で入院。"
+  },
+  {
+    "case_id": "CASE-cancer-005",
+    "disease": "cancer",
+    "age_group": "70s",
+    "sex": "M",
+    "labs": {
+      "lactate": 1.5,
+      "albumin": 3.7,
+      "crp": 223.9,
+      "nlr": 42.5,
+      "sii": 5525.0,
+      "ntprobnp": 708.0,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.1,
+      "wbc": 32.0
+    },
+    "clinical_note": "肺癌の既往。全身倦怠感で入院。"
+  },
+  {
+    "case_id": "CASE-pneumonia-001",
+    "disease": "pneumonia",
+    "age_group": "60s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.1,
+      "albumin": 2.9,
+      "crp": 128.0,
+      "nlr": 1.35,
+      "sii": 100.08,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 0.7,
+      "wbc": 9.2
+    },
+    "clinical_note": "発熱・咳嗽・呼吸困難。重症肺炎。"
+  },
+  {
+    "case_id": "CASE-pneumonia-002",
+    "disease": "pneumonia",
+    "age_group": "50s",
+    "sex": "F",
+    "labs": {
+      "lactate": 3.8,
+      "albumin": 3.3,
+      "crp": 161.4,
+      "nlr": 38.0,
+      "sii": 2280.0,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.5,
+      "wbc": 17.4
+    },
+    "clinical_note": "発熱・咳嗽・低酸素。重症肺炎。"
+  },
+  {
+    "case_id": "CASE-pneumonia-003",
+    "disease": "pneumonia",
+    "age_group": "70s",
+    "sex": "M",
+    "labs": {
+      "lactate": 1.7,
+      "albumin": 2.0,
+      "crp": 251.9,
+      "nlr": 24.05,
+      "sii": 4401.89,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 4.9,
+      "wbc": 22.1
+    },
+    "clinical_note": "発熱・咳嗽・呼吸困難。重症肺炎。"
+  },
+  {
+    "case_id": "CASE-pneumonia-004",
+    "disease": "pneumonia",
+    "age_group": "60s",
+    "sex": "M",
+    "labs": {
+      "lactate": 1.5,
+      "albumin": 2.8,
+      "crp": 264.2,
+      "nlr": 15.19,
+      "sii": 5559.06,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 0.7,
+      "wbc": 10.6
+    },
+    "clinical_note": "発熱・咳嗽・呼吸困難。重症肺炎。"
+  },
+  {
+    "case_id": "CASE-pneumonia-005",
+    "disease": "pneumonia",
+    "age_group": "50s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.5,
+      "albumin": 2.7,
+      "crp": 184.2,
+      "nlr": 5.99,
+      "sii": 2109.39,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.6,
+      "wbc": 9.0
+    },
+    "clinical_note": "発熱・咳嗽・呼吸困難。重症肺炎。"
+  },
+  {
+    "case_id": "CASE-fracture-001",
+    "disease": "fracture",
+    "age_group": "50s",
+    "sex": "M",
+    "labs": {
+      "lactate": 7.5,
+      "albumin": 0.6,
+      "crp": null,
+      "nlr": 2.97,
+      "sii": 294.04,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.5,
+      "wbc": 16.1
+    },
+    "clinical_note": "橈骨骨折。術前評価入院。"
+  },
+  {
+    "case_id": "CASE-fracture-002",
+    "disease": "fracture",
+    "age_group": "60s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.2,
+      "albumin": 2.0,
+      "crp": null,
+      "nlr": 15.33,
+      "sii": 3111.44,
+      "ntprobnp": null,
+      "troponin_i": 0.39,
+      "il6": 192.0,
+      "homocysteine": null,
+      "creatinine": 6.9,
+      "wbc": 9.7
+    },
+    "clinical_note": "橈骨骨折。術前評価入院。"
+  },
+  {
+    "case_id": "CASE-fracture-003",
+    "disease": "fracture",
+    "age_group": "80s",
+    "sex": "M",
+    "labs": {
+      "lactate": 1.0,
+      "albumin": 2.9,
+      "crp": null,
+      "nlr": 7.59,
+      "sii": 1176.8,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": 237.0,
+      "homocysteine": null,
+      "creatinine": 1.8,
+      "wbc": 6.0
+    },
+    "clinical_note": "大腿骨骨折。術前評価入院。"
+  },
+  {
+    "case_id": "CASE-fracture-004",
+    "disease": "fracture",
+    "age_group": "80s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.3,
+      "albumin": 2.7,
+      "crp": null,
+      "nlr": 18.43,
+      "sii": 6062.0,
+      "ntprobnp": 997.0,
+      "troponin_i": 0.07,
+      "il6": 195.0,
+      "homocysteine": null,
+      "creatinine": 0.8,
+      "wbc": 12.5
+    },
+    "clinical_note": "大腿骨骨折。術前評価入院。"
+  },
+  {
+    "case_id": "CASE-fracture-005",
+    "disease": "fracture",
+    "age_group": "60s",
+    "sex": "F",
+    "labs": {
+      "lactate": 0.9,
+      "albumin": 4.3,
+      "crp": 5.9,
+      "nlr": 5.26,
+      "sii": 893.36,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 0.6,
+      "wbc": 15.5
+    },
+    "clinical_note": "橈骨骨折。術前評価入院。"
+  },
+  {
+    "case_id": "CASE-infection-001",
+    "disease": "infection",
+    "age_group": "80s",
+    "sex": "M",
+    "labs": {
+      "lactate": 1.5,
+      "albumin": 3.4,
+      "crp": 199.5,
+      "nlr": 10.82,
+      "sii": 1839.87,
+      "ntprobnp": null,
+      "troponin_i": 0.04,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.2,
+      "wbc": 6.8
+    },
+    "clinical_note": "発熱・尿路感染疑い。SOFA推定6点。"
+  },
+  {
+    "case_id": "CASE-infection-002",
+    "disease": "infection",
+    "age_group": "60s",
+    "sex": "M",
+    "labs": {
+      "lactate": 2.1,
+      "albumin": 2.0,
+      "crp": 70.3,
+      "nlr": 39.0,
+      "sii": 3159.0,
+      "ntprobnp": null,
+      "troponin_i": 0.03,
+      "il6": 121.0,
+      "homocysteine": null,
+      "creatinine": 3.9,
+      "wbc": 65.7
+    },
+    "clinical_note": "発熱・肺炎疑い。SOFA推定6点。"
+  },
+  {
+    "case_id": "CASE-infection-003",
+    "disease": "infection",
+    "age_group": "70s",
+    "sex": "M",
+    "labs": {
+      "lactate": 2.2,
+      "albumin": 2.6,
+      "crp": 170.2,
+      "nlr": 2.81,
+      "sii": 373.96,
+      "ntprobnp": 24172.0,
+      "troponin_i": 0.51,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 1.2,
+      "wbc": 17.0
+    },
+    "clinical_note": "発熱・肺炎疑い。SOFA推定6点。"
+  },
+  {
+    "case_id": "CASE-infection-004",
+    "disease": "infection",
+    "age_group": "70s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.7,
+      "albumin": 1.9,
+      "crp": 98.8,
+      "nlr": 18.8,
+      "sii": 7256.8,
+      "ntprobnp": null,
+      "troponin_i": 0.04,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 0.9,
+      "wbc": 11.5
+    },
+    "clinical_note": "発熱・肺炎疑い。SOFA推定6点。"
+  },
+  {
+    "case_id": "CASE-infection-005",
+    "disease": "infection",
+    "age_group": "20s",
+    "sex": "F",
+    "labs": {
+      "lactate": 1.3,
+      "albumin": 2.6,
+      "crp": 100.3,
+      "nlr": 3.64,
+      "sii": 753.99,
+      "ntprobnp": null,
+      "troponin_i": null,
+      "il6": null,
+      "homocysteine": null,
+      "creatinine": 0.9,
+      "wbc": 3.1
+    },
+    "clinical_note": "発熱・尿路感染疑い。SOFA推定6点。"
+  }
+]

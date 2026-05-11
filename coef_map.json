@@ -1,0 +1,5 @@
+{
+  "lactate":  {"cardiac": 0.1605, "stroke": 0.0,    "cancer": 0.2107, "pneumonia": 0.2056, "fracture": 0.3875, "infection": 0.1379},
+  "albumin":  {"cardiac": -0.5518,"stroke": 0.0,    "cancer": 0.0,    "pneumonia": -0.4461,"fracture": 0.0,   "infection": -0.5742},
+  "crp":      {"cardiac": 0.0,    "stroke": 0.0,    "cancer": 0.0,    "pneumonia": 0.0,    "fracture": 0.0,   "infection": 0.0}
+}

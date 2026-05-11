@@ -248,8 +248,8 @@
     const INFECTION_REQUIRED_ITEMS = ["pao2", "fio2", "platelet", "bilirubin_total", "creatinine"];
     const DEFAULT_MASTER = {
       items: [
-        { id: "lactate", name_jp: "乳酸", category_jp: "血液ガス", unit: "mmol/L", ref_low: 0.5, ref_high: 2.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.14, coef_map: {"cardiac": 0.1147, "stroke": 0.1669, "cancer": 0.1514, "pneumonia": 0.1975, "fracture": 0.3875, "infection": 0.1401}, "info": "【乳酸】組織低灌流・嫌気性代謝の指標。>2.0 mmol/L で予後不良。MIMIC-IV Cox β=0.10〜0.25（全6疾患p<0.05）。", high_text: "組織低灌流や重症感染を示唆します。", low_text: "基準下限未満です。" },
-        { id: "albumin", name_jp: "アルブミン", category_jp: "生化学", unit: "g/dL", ref_low: 3.5, ref_high: 5.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: -0.28, coef_map: {"cardiac": -0.5515, "stroke": 0.0, "cancer": 0.0, "pneumonia": 0.0, "fracture": 0.0, "infection": -0.6881}, "info": "【アルブミン】栄養状態・炎症・予備能の統合指標。<3.5 g/dL で予後不良。全6疾患で死亡リスク増加（HR 0.52〜0.87）。stroke/fracture では p≥0.05（非有意）。", high_text: "脱水などの影響を考慮します。", low_text: "低栄養、炎症、予備能低下を示唆します。" },
+        { id: "lactate", name_jp: "乳酸", category_jp: "血液ガス", unit: "mmol/L", ref_low: 0.5, ref_high: 2.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.14, coef_map: {"cardiac": 0.1605, "stroke": 0.0, "cancer": 0.2107, "pneumonia": 0.2056, "fracture": 0.3875, "infection": 0.1379}, "info": "【乳酸】組織低灌流・嫌気性代謝の指標。>2.0 mmol/L で予後不良。MIMIC-IV Cox β=0.10〜0.25（全6疾患p<0.05）。", high_text: "組織低灌流や重症感染を示唆します。", low_text: "基準下限未満です。" },
+        { id: "albumin", name_jp: "アルブミン", category_jp: "生化学", unit: "g/dL", ref_low: 3.5, ref_high: 5.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: -0.28, coef_map: {"cardiac": -0.5518, "stroke": 0.0, "cancer": 0.0, "pneumonia": -0.4461, "fracture": 0.0, "infection": -0.5742}, "info": "【アルブミン】栄養状態・炎症・予備能の統合指標。<3.5 g/dL で予後不良。全6疾患で死亡リスク増加（HR 0.52〜0.87）。stroke/fracture では p≥0.05（非有意）。", high_text: "脱水などの影響を考慮します。", low_text: "低栄養、炎症、予備能低下を示唆します。" },
         { id: "nlr", name_jp: "NLR", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 5, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef_map: {"cardiac": 0.0, "stroke": 0.0, "cancer": 0.0, "pneumonia": 0.0, "fracture": 0.0, "infection": 0.0}, "info": "【NLR: 好中球/リンパ球比】全身炎症と免疫抑制のバランス指標。>5 で炎症亢進。cardiac/stroke/pneumonia/infection で p<0.05。cancer/fracture は非有意。" },
         { id: "sii", name_jp: "SII", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 600, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef_map: {"cardiac": 0.0, "stroke": 0.0, "cancer": 0.0, "pneumonia": 0.0, "fracture": 0.0, "infection": 0.0}, "info": "【SII: 全身免疫炎症指数】血小板×好中球/リンパ球。>600 で高リスク。MIMIC-IV解析では全6疾患でβ≈0（予後独立性なし・参考値として表示）。" },
         { id: "crp", name_jp: "CRP", category_jp: "炎症", unit: "mg/dL", ref_low: 0, ref_high: 0.3, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], coef: 0.018, "info": "【CRP】急性炎症反応蛋白。感染後6〜8時間で上昇開始、ピーク48〜72h。診断オッズ比5.43（PCT=14.69より低い）。肺炎では4日目50%未満低下→30日死亡リスク増加。", high_text: "炎症反応の上昇を示唆します。", low_text: "基準範囲内です。" },
@@ -283,6 +283,7 @@
     };
 
     const storeKey = "cdss_single_file_settings_v1";
+    const MARKERS = DEFAULT_MASTER.items;
     const inputValues = {};
     let master = DEFAULT_MASTER;
     let scoreNorm = {};
@@ -298,6 +299,21 @@
     const itemCategory = (item) => item.category_jp || item.category || "その他";
     const itemUnit = (item) => item.unit || "";
     const itemTier = (item) => Number(item.tier || 1);
+
+    async function loadCoefMap() {
+      try {
+        const res = await fetch('./coef_map.json');
+        if (!res.ok) return;
+        const coefMap = await res.json();
+        MARKERS.forEach(item => {
+          if (coefMap[item.id]) {
+            item.coef_map = coefMap[item.id];
+          }
+        });
+      } catch(e) {
+        console.warn('coef_map.json load failed, using embedded values:', e);
+      }
+    }
 
     async function loadMaster() {
       try {
@@ -1177,7 +1193,10 @@
       }
     });
 
-    loadMaster();
+    document.addEventListener("DOMContentLoaded", async () => {
+      await loadCoefMap();
+      loadMaster();
+    });
   </script>
 </body>
 </html>

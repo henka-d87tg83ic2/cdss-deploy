@@ -84,6 +84,20 @@
     .info-row:first-child { margin-top: 0; }
     .info-label { color: #bfd1e5; font-size: 12px; font-weight: 800; }
     .info-text { margin-top: 3px; color: var(--text); font-size: 14px; line-height: 1.45; }
+    .case-toolbar { display: grid; gap: 8px; margin-bottom: 12px; }
+    .case-banner { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 10px 12px; background: rgba(47, 209, 124, 0.12); border: 1px solid rgba(47, 209, 124, 0.35); border-radius: 8px; color: #c8f8df; font-size: 13px; }
+    .case-banner[hidden] { display: none; }
+    .case-clear { min-height: 32px; border: 1px solid #34465c; border-radius: 7px; background: #233143; color: var(--text); font-size: 12px; font-weight: 800; }
+    .case-modal { max-height: min(82vh, 720px); display: flex; flex-direction: column; }
+    .case-filters { display: flex; gap: 8px; overflow-x: auto; padding: 12px 14px 8px; border-bottom: 1px solid rgba(39, 50, 65, 0.7); }
+    .case-filter { flex: 0 0 auto; min-height: 34px; border: 1px solid #34465c; border-radius: 999px; padding: 6px 10px; background: #233143; color: var(--text); font-size: 12px; font-weight: 800; }
+    .case-filter.active { background: var(--blue); border-color: var(--blue); color: #06101a; }
+    .case-list { overflow-y: auto; padding: 12px 14px 16px; }
+    .case-card { width: 100%; min-height: 104px; margin: 0 0 10px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); color: var(--text); text-align: left; }
+    .case-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .case-id { font-size: 13px; font-weight: 900; }
+    .case-note { margin-top: 8px; color: var(--text); font-size: 13px; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .case-card-meta { margin-top: 6px; color: var(--muted); font-size: 12px; }
   </style>
 </head>
 <body>
@@ -97,6 +111,13 @@
 
     <main>
       <section class="page active" id="page-input">
+        <div class="case-toolbar">
+          <button class="button secondary" id="loadCaseBtn">症例を読み込む</button>
+          <div class="case-banner" id="caseBanner" hidden>
+            <span id="caseBannerText"></span>
+            <button class="case-clear" id="clearCaseBtn" type="button">手動入力に戻る</button>
+          </div>
+        </div>
         <div class="section">
           <div class="section-title">疾患</div>
           <select id="diseaseSelect"></select>
@@ -184,8 +205,19 @@
       <div class="modal-body" id="infoModalBody"></div>
     </div>
   </div>
+  <div class="modal-backdrop" id="caseModal" hidden>
+    <div class="modal case-modal" role="dialog" aria-modal="true" aria-labelledby="caseModalTitle">
+      <div class="modal-head">
+        <div class="modal-title" id="caseModalTitle">検証症例を選択</div>
+        <button class="modal-close" id="caseModalClose" type="button" aria-label="閉じる">×</button>
+      </div>
+      <div class="case-filters" id="caseFilters"></div>
+      <div class="case-list" id="caseList"><div class="empty">症例データを読み込み中です</div></div>
+    </div>
+  </div>
 
   <script>
+    const CASES_PUBLIC_URL = "https://henka-d87tg83ic2.github.io/cdss-deploy/cdss/cases_public.json";
     const DISEASES = [
       ["cardiac", "心臓病"],
       ["stroke", "脳卒中"],
@@ -253,6 +285,9 @@
     let master = DEFAULT_MASTER;
     let settings = null;
     let lastResult = null;
+    let casePack = [];
+    let caseFilter = "all";
+    let caseBannerTimer = null;
 
     const $ = (id) => document.getElementById(id);
     const itemId = (item) => item.id || item.key || item.name || item.name_jp;
@@ -362,6 +397,8 @@
       const n = Number(inputValues.neutrophils);
       const l = Number(inputValues.lymphocytes);
       const p = Number(inputValues.platelet);
+      const loadedNlr = Number(inputValues.nlr);
+      const loadedSii = Number(inputValues.sii);
       const crp = Number(inputValues.crp);
       const alb = Number(inputValues.albumin);
       const pao2 = Number(inputValues.pao2);
@@ -369,7 +406,9 @@
       const sofa = sofaScore();
       const out = {};
       if (n > 0 && l > 0) out.NLR = n / l;
+      else if (loadedNlr > 0) out.NLR = loadedNlr;
       if (n > 0 && l > 0 && p > 0) out.SII = (p * n) / l;
+      else if (loadedSii > 0) out.SII = loadedSii;
       if (!Number.isNaN(crp) && !Number.isNaN(alb)) out.GPS = (crp > 1 ? 1 : 0) + (alb < 3.5 ? 1 : 0);
       if (pao2 > 0 && fio2 > 0) out.PF_ratio = pao2 / (fio2 > 1 ? fio2 / 100 : fio2);
       if (currentDisease() === "infection" && sofa !== null) out.SOFA = sofa;
@@ -889,6 +928,97 @@
       $("infoModal").hidden = true;
     }
 
+    function diseaseName(id) {
+      return DISEASES.find(([diseaseId]) => diseaseId === id)?.[1] || id;
+    }
+
+    async function ensureCasePack() {
+      if (casePack.length) return casePack;
+      try {
+        const res = await fetch(CASES_PUBLIC_URL, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        casePack = await res.json();
+        return casePack;
+      } catch (_) {
+        alert("症例データ読み込み失敗");
+        return [];
+      }
+    }
+
+    async function openCaseModal() {
+      $("caseModal").hidden = false;
+      renderCaseFilters();
+      $("caseList").innerHTML = `<div class="empty">症例データを読み込み中です</div>`;
+      await ensureCasePack();
+      renderCaseList();
+    }
+
+    function closeCaseModal() {
+      $("caseModal").hidden = true;
+    }
+
+    function renderCaseFilters() {
+      const filters = [["all", "全て"], ...DISEASES];
+      $("caseFilters").innerHTML = filters.map(([id, name]) => `
+        <button class="case-filter ${caseFilter === id ? "active" : ""}" type="button" data-case-filter="${escapeAttr(id)}">${escapeHtml(name)}</button>
+      `).join("");
+    }
+
+    function renderCaseList() {
+      const cases = caseFilter === "all" ? casePack : casePack.filter((item) => item.disease === caseFilter);
+      $("caseList").innerHTML = cases.length ? cases.map(renderCaseCard).join("") : `<div class="empty">該当する症例はありません</div>`;
+    }
+
+    function renderCaseCard(item) {
+      const labs = item.labs || {};
+      const labCount = Object.values(labs).filter((value) => value !== null && value !== undefined && value !== "").length;
+      return `
+        <button class="case-card" type="button" data-case-id="${escapeAttr(item.case_id)}">
+          <div class="case-card-top">
+            <span class="case-id">${escapeHtml(item.case_id)}</span>
+            <span class="badge">${escapeHtml(diseaseName(item.disease))}</span>
+          </div>
+          <div class="case-card-meta">${escapeHtml(item.age_group || "-")} / ${escapeHtml(item.sex || "-")} / 検査値 ${labCount}項目</div>
+          <div class="case-note">${escapeHtml(item.clinical_note || "")}</div>
+        </button>
+      `;
+    }
+
+    function showCaseBanner(caseId) {
+      $("caseBannerText").textContent = `症例: ${caseId} を読み込みました`;
+      $("caseBanner").hidden = false;
+      if (caseBannerTimer) clearTimeout(caseBannerTimer);
+      caseBannerTimer = setTimeout(() => {
+        $("caseBanner").hidden = true;
+      }, 3000);
+    }
+
+    function applyCase(caseId) {
+      const item = casePack.find((candidate) => candidate.case_id === caseId);
+      if (!item) return;
+      closeCaseModal();
+      $("diseaseSelect").value = item.disease || "cardiac";
+      clearInputs(false);
+      const labs = item.labs || {};
+      Object.entries(labs).forEach(([id, value]) => {
+        inputValues[id] = value === null || value === undefined ? "" : String(value);
+      });
+      renderAll();
+      showCaseBanner(item.case_id);
+      calculateRisk();
+      switchPage("result");
+    }
+
+    function clearInputs(render = true) {
+      Object.keys(inputValues).forEach((key) => {
+        inputValues[key] = "";
+      });
+      lastResult = null;
+      if (caseBannerTimer) clearTimeout(caseBannerTimer);
+      $("caseBanner").hidden = true;
+      if (render) renderAll();
+    }
+
     function switchPage(page) {
       document.querySelectorAll(".page").forEach((el) => el.classList.toggle("active", el.id === `page-${page}`));
       document.querySelectorAll(".tab").forEach((el) => el.classList.toggle("active", el.dataset.page === page));
@@ -907,7 +1037,7 @@
       const sw = `
         const CACHE = "cdss-html-v1";
         self.addEventListener("install", (event) => {
-          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "lab_master_v1.json"]).catch(() => undefined)));
+          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "lab_master_v1.json", "${CASES_PUBLIC_URL}"]).catch(() => undefined)));
           self.skipWaiting();
         });
         self.addEventListener("activate", (event) => {
@@ -955,10 +1085,22 @@
       const infoTarget = event.target.closest("[data-info-id]");
       if (infoTarget) showInfoModal(infoTarget.dataset.infoId);
       if (event.target.id === "infoModal" || event.target.id === "infoModalClose") closeInfoModal();
+      if (event.target.id === "caseModal" || event.target.id === "caseModalClose") closeCaseModal();
+      const filterTarget = event.target.closest("[data-case-filter]");
+      if (filterTarget) {
+        caseFilter = filterTarget.dataset.caseFilter;
+        renderCaseFilters();
+        renderCaseList();
+      }
+      const caseTarget = event.target.closest("[data-case-id]");
+      if (caseTarget) applyCase(caseTarget.dataset.caseId);
     });
 
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeInfoModal();
+      if (event.key === "Escape") {
+        closeInfoModal();
+        closeCaseModal();
+      }
       if ((event.key === "Enter" || event.key === " ") && event.target.dataset.infoId) {
         event.preventDefault();
         showInfoModal(event.target.dataset.infoId);
@@ -978,6 +1120,8 @@
     });
 
     document.querySelectorAll(".tab").forEach((tab) => tab.addEventListener("click", () => switchPage(tab.dataset.page)));
+    $("loadCaseBtn").addEventListener("click", openCaseModal);
+    $("clearCaseBtn").addEventListener("click", () => clearInputs());
     $("judgeBtn").addEventListener("click", () => { calculateRisk(); switchPage("result"); });
     $("saveSettingsBtn").addEventListener("click", saveSettings);
     $("resetSettingsBtn").addEventListener("click", () => {

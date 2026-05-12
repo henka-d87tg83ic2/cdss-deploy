@@ -1,0 +1,186 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "version": "cox_multivariate_v2",
+    "config_id": "cox_multivariate_v2",
+    "updated": "2026-05-12",
+    "source_of_truth": "04_CDSS/config/coef_map.json",
+    "coefficient_source": "Cox Multivariate v2 canonical coefficients",
+    "coefficient_policy": "Use Cox Multivariate v2 coefficients only. Coefficients that are non-significant, disabled, unavailable in MIMIC-IV v3.1, or not present in the verified canonical artifact are set to 0.0.",
+    "runtime_policy": "Do not hardcode coefficients in HTML, Python, notebooks, or validation scripts. Consumers must load this JSON file.",
+    "billing_project": "myenv-gws",
+    "forbidden_billing_project": "physionet-data",
+    "status": "verified_from_local_cox_multivariate_v2_artifact"
+  },
+  "provenance": {
+    "source_file": "/home/kna97/myenv/results/cox_multivariate_v2.parquet",
+    "source_script": "/home/kna97/myenv/reanalysis_cox_v2.py",
+    "reference_legacy_map": "/home/kna97/myenv/cdss-deploy/coef_map.json",
+    "verified_by": "Codex",
+    "verified_at": "2026-05-12",
+    "git_hash_at_verification": "402eaa7",
+    "notes": [
+      "Only coefficients with p < 0.05 in cox_multivariate_v2.parquet are active nonzero values.",
+      "Stroke Cox Multivariate v2 coefficients are present but non-significant and set to 0.0.",
+      "Fracture is not present in cox_multivariate_v2.parquet and is set to 0.0.",
+      "NLR and SII remain disabled and are not active scoring features."
+    ]
+  },
+  "active_features": [
+    "lactate",
+    "albumin",
+    "charlson_comorbidity_index",
+    "CRP",
+    "creatinine",
+    "troponin_i"
+  ],
+  "features": {
+    "lactate": {
+      "label": "Lactate",
+      "type": "lab",
+      "unit": "mmol/L",
+      "enabled": true
+    },
+    "albumin": {
+      "label": "Albumin",
+      "type": "lab",
+      "unit": "g/dL",
+      "enabled": true
+    },
+    "charlson_comorbidity_index": {
+      "label": "Charlson comorbidity index",
+      "type": "derived",
+      "enabled": true
+    },
+    "CRP": {
+      "label": "C-reactive protein",
+      "type": "lab",
+      "unit": "mg/L",
+      "enabled": true,
+      "known_limitation": "CRP coverage is limited in MIMIC-IV v3.1 and must be reported with missingness."
+    },
+    "creatinine": {
+      "label": "Creatinine",
+      "type": "lab",
+      "unit": "mg/dL",
+      "enabled": true
+    },
+    "troponin_i": {
+      "label": "Troponin I",
+      "type": "lab",
+      "unit": "ng/mL",
+      "enabled": true
+    },
+    "NLR": {
+      "label": "Neutrophil lymphocyte ratio",
+      "type": "derived",
+      "enabled": false,
+      "disabled_reason": "Disabled by governance until explicitly re-enabled."
+    },
+    "SII": {
+      "label": "Systemic immune-inflammation index",
+      "type": "derived",
+      "enabled": false,
+      "disabled_reason": "Disabled by governance until explicitly re-enabled."
+    }
+  },
+  "diseases": {
+    "cardiac": {
+      "label": "Cardiac",
+      "outcome": "hospital_expire_flag",
+      "duration": "los_days",
+      "enabled": true
+    },
+    "stroke": {
+      "label": "Stroke",
+      "outcome": "hospital_expire_flag",
+      "duration": "los_days",
+      "enabled": true
+    },
+    "cancer": {
+      "label": "Cancer",
+      "outcome": "hospital_expire_flag",
+      "duration": "los_days",
+      "enabled": true
+    },
+    "pneumonia": {
+      "label": "Pneumonia",
+      "outcome": "hospital_expire_flag",
+      "duration": "los_days",
+      "enabled": true
+    },
+    "fracture": {
+      "label": "Fracture",
+      "outcome": "hospital_expire_flag",
+      "duration": "los_days",
+      "enabled": true
+    },
+    "infection": {
+      "label": "Infection",
+      "outcome": "hospital_expire_flag",
+      "duration": "los_days",
+      "enabled": true
+    }
+  },
+  "coef_map": {
+    "cardiac": {
+      "lactate": 0.1605,
+      "albumin": -0.5518,
+      "charlson_comorbidity_index": 0.0,
+      "CRP": 0.0,
+      "creatinine": 0.0,
+      "troponin_i": 0.0
+    },
+    "stroke": {
+      "lactate": 0.0,
+      "albumin": 0.0,
+      "charlson_comorbidity_index": 0.0,
+      "CRP": 0.0,
+      "creatinine": 0.0,
+      "troponin_i": 0.0
+    },
+    "cancer": {
+      "lactate": 0.2107,
+      "albumin": 0.0,
+      "charlson_comorbidity_index": 0.0,
+      "CRP": 0.0,
+      "creatinine": 0.0,
+      "troponin_i": 0.0
+    },
+    "pneumonia": {
+      "lactate": 0.2056,
+      "albumin": -0.4461,
+      "charlson_comorbidity_index": 0.0,
+      "CRP": 0.0,
+      "creatinine": 0.0,
+      "troponin_i": 0.0
+    },
+    "fracture": {
+      "lactate": 0.0,
+      "albumin": 0.0,
+      "charlson_comorbidity_index": 0.0,
+      "CRP": 0.0,
+      "creatinine": 0.0,
+      "troponin_i": 0.0
+    },
+    "infection": {
+      "lactate": 0.1379,
+      "albumin": -0.5742,
+      "charlson_comorbidity_index": 0.0,
+      "CRP": 0.0,
+      "creatinine": 0.0,
+      "troponin_i": 0.0
+    }
+  },
+  "disabled_features": [
+    "NLR",
+    "SII"
+  ],
+  "known_limitations": [
+    "MIMIC-IV v3.1 does not provide reliable patient ZIP-level geography; spatial analysis must use approved proxy linkage only.",
+    "CRP availability is incomplete and validation reports must include missingness, complete-case counts, and sample-collapse checks.",
+    "This file is the coefficient single source of truth; score_norm.json and marker_strength.json are not coefficient maps.",
+    "The BigQuery billing project is myenv-gws. Do not use physionet-data as the billing project.",
+    "Streamlit is not an approved final UI, React artifacts are not part of the approved foundation, and coefficients must not be embedded in HTML."
+  ]
+}

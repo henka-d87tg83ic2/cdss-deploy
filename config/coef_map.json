@@ -15,14 +15,13 @@
   "provenance": {
     "source_file": "/home/kna97/myenv/results/cox_multivariate_v2.parquet",
     "source_script": "/home/kna97/myenv/reanalysis_cox_v2.py",
-    "reference_legacy_map": "/home/kna97/myenv/cdss-deploy/coef_map.json",
+    "rule": "p < 0.05 coefficients retained; non-significant/unavailable coefficients set to 0.0",
     "verified_by": "Codex",
-    "verified_at": "2026-05-12",
-    "git_hash_at_verification": "402eaa7",
+    "verified_at": "2026-05-12T21:04:16",
+    "git_hash_at_verification": "44602e7",
     "notes": [
       "Only coefficients with p < 0.05 in cox_multivariate_v2.parquet are active nonzero values.",
-      "Stroke Cox Multivariate v2 coefficients are present but non-significant and set to 0.0.",
-      "Fracture is not present in cox_multivariate_v2.parquet and is set to 0.0.",
+      "Fracture is not present as a significant Cox Multivariate v2 lactate coefficient and is set to 0.0.",
       "NLR and SII remain disabled and are not active scoring features."
     ]
   },
@@ -182,5 +181,13 @@
     "This file is the coefficient single source of truth; score_norm.json and marker_strength.json are not coefficient maps.",
     "The BigQuery billing project is myenv-gws. Do not use physionet-data as the billing project.",
     "Streamlit is not an approved final UI, React artifacts are not part of the approved foundation, and coefficients must not be embedded in HTML."
+  ],
+  "active_diseases": [
+    "cardiac",
+    "stroke",
+    "cancer",
+    "pneumonia",
+    "fracture",
+    "infection"
   ]
 }

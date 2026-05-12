@@ -343,12 +343,7 @@
 	    }
 
     async function loadMaster() {
-      try {
-        const res = await fetch("lab_master_v1.json", { cache: "no-store" });
-        if (res.ok) master = normalizeMaster(await res.json());
-      } catch (_) {
-        master = normalizeMaster(DEFAULT_MASTER);
-      }
+      master = normalizeMaster(DEFAULT_MASTER);
       try {
         const normRes = await fetch("cdss/score_norm.json", { cache: "no-store" });
         if (normRes.ok) scoreNorm = await normRes.json();
@@ -1129,7 +1124,7 @@
       const sw = `
 	        const CACHE = "cdss-html-v3";
 	        self.addEventListener("install", (event) => {
-	          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "lab_master_v1.json", "config/coef_map.json", "cdss/score_norm.json", "${CASES_PUBLIC_URL}"]).catch(() => undefined)));
+	          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "config/coef_map.json", "cdss/score_norm.json", "${CASES_PUBLIC_URL}"]).catch(() => undefined)));
           self.skipWaiting();
         });
         self.addEventListener("activate", (event) => {

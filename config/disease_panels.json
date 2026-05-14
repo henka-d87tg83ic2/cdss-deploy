@@ -1,0 +1,56 @@
+{
+  "cardiac": {
+    "AUC": 0.8098,
+    "primary": [
+      "lactate",
+      "albumin"
+    ],
+    "n": 1998,
+    "status": "validated"
+  },
+  "infection": {
+    "AUC": 0.7225,
+    "primary": [
+      "lactate",
+      "albumin"
+    ],
+    "n": 1503,
+    "status": "validated"
+  },
+  "fracture": {
+    "AUC": 0.7321,
+    "primary": [
+      "sCAR"
+    ],
+    "note": "EPV=1, univariate only",
+    "n": 413,
+    "status": "validated"
+  },
+  "pneumonia": {
+    "AUC": 0.6973,
+    "primary": [
+      "lactate",
+      "albumin"
+    ],
+    "n": 910,
+    "status": "weak_signal"
+  },
+  "cancer": {
+    "AUC": 0.6955,
+    "primary": [
+      "lactate"
+    ],
+    "note": "albumin missing 50%+",
+    "n": 663,
+    "status": "weak_signal"
+  },
+  "stroke": {
+    "AUC": 0.645,
+    "primary": [
+      "sCAR"
+    ],
+    "note": "sCAR missing 82%, BUN secondary candidate",
+    "n": 1407,
+    "status": "weak_signal"
+  }
+}

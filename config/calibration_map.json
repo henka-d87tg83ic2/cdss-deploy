@@ -1,0 +1,104 @@
+{
+  "cardiac": {
+    "method": "platt_scaling",
+    "coef": 1.7072959035820419,
+    "intercept": -1.666836186811677,
+    "base_features": [],
+    "n": null,
+    "events": null,
+    "status": "validated",
+    "cv_slope_mean": 1.014,
+    "cv_brier_mean": 0.125,
+    "probability_display_allowed": true,
+    "score_orientation": "higher_score_higher_mortality_risk",
+    "positive_class": "dead",
+    "time_horizon": "hospital_mortality"
+  },
+  "stroke": {
+    "method": "platt_scaling",
+    "coef": 2.617037292296396,
+    "intercept": -1.8697539607841602,
+    "base_features": [
+      "sCAR"
+    ],
+    "n": 1407,
+    "events": 205,
+    "status": "validated",
+    "cv_slope_mean": 1.032,
+    "cv_brier_mean": 0.117,
+    "probability_display_allowed": true,
+    "score_orientation": "higher_score_higher_mortality_risk",
+    "positive_class": "dead",
+    "time_horizon": "hospital_mortality"
+  },
+  "pneumonia": {
+    "method": "platt_scaling",
+    "coef": 1.270251422132925,
+    "intercept": -1.1251098632655516,
+    "base_features": [
+      "lactate",
+      "albumin"
+    ],
+    "n": 910,
+    "events": 233,
+    "status": "validated",
+    "cv_slope_mean": 0.997,
+    "cv_brier_mean": 0.17,
+    "probability_display_allowed": true,
+    "score_orientation": "higher_score_higher_mortality_risk",
+    "positive_class": "dead",
+    "time_horizon": "hospital_mortality"
+  },
+  "cancer": {
+    "method": "platt_scaling",
+    "coef": 1.2883673122934314,
+    "intercept": -1.868577638351844,
+    "base_features": [
+      "lactate"
+    ],
+    "n": 661,
+    "events": 101,
+    "status": "validated",
+    "cv_slope_mean": 1.058,
+    "cv_brier_mean": 0.112,
+    "probability_display_allowed": true,
+    "score_orientation": "higher_score_higher_mortality_risk",
+    "positive_class": "dead",
+    "time_horizon": "hospital_mortality"
+  },
+  "fracture": {
+    "method": "platt_scaling",
+    "coef": 0.9717790473873538,
+    "intercept": -2.5645839467762737,
+    "base_features": [
+      "sCAR"
+    ],
+    "n": 413,
+    "events": 35,
+    "status": "underpowered",
+    "cv_slope_mean": null,
+    "cv_brier_mean": 0.074,
+    "probability_display_allowed": false,
+    "score_orientation": "higher_score_higher_mortality_risk",
+    "positive_class": "dead",
+    "time_horizon": "hospital_mortality"
+  },
+  "infection": {
+    "method": "platt_scaling",
+    "coef": 1.462586525803265,
+    "intercept": -1.073958967130651,
+    "base_features": [
+      "lactate",
+      "albumin"
+    ],
+    "n": 1502,
+    "events": 412,
+    "status": "validated",
+    "cv_slope_mean": 1.014,
+    "cv_brier_mean": 0.17,
+    "probability_display_allowed": true,
+    "score_orientation": "higher_score_higher_mortality_risk",
+    "positive_class": "dead",
+    "time_horizon": "hospital_mortality"
+  }
+}

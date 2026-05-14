@@ -1,0 +1,147 @@
+{
+  "meta": {
+    "version": "thresholds_v1",
+    "updated": "2026-05-12",
+    "source": "extracted_from_existing_runtime_logic",
+    "policy": {
+      "do_not_optimize_for_valid_a70_without_auc_repair": true,
+      "score_norm_is_not_threshold_source": true,
+      "do_not_claim_valid_a70_from_threshold_changes": true
+    },
+    "notes": [
+      "Thresholds are copied from existing Python runtime metadata only.",
+      "No new threshold optimization was performed.",
+      "HTML marker cutoffs and score_norm normalization thresholds are inventoried in the validation report, not promoted here."
+    ]
+  },
+  "thresholds": {
+    "global": null,
+    "disease_specific": {
+      "cardiac": {
+        "score_type": "partial_hazard",
+        "default_mode": "cost",
+        "source_file": "analysis/models/metadata.json",
+        "source_consumer": "analysis/score_calculator.py",
+        "modes": {
+          "youden": {
+            "value": 0.9978211022923525,
+            "sens": 0.632,
+            "spec": 0.631,
+            "ppv": 0.341,
+            "npv": 0.85
+          },
+          "cost": {
+            "value": 0.7516713141098372,
+            "sens": 0.995,
+            "spec": 0.065,
+            "ppv": 0.243,
+            "npv": 0.976
+          }
+        }
+      },
+      "stroke": null,
+      "cancer": null,
+      "pneumonia": {
+        "score_type": "partial_hazard",
+        "default_mode": "cost",
+        "source_file": "analysis/models/metadata.json",
+        "source_consumer": "analysis/score_calculator.py",
+        "modes": {
+          "youden": {
+            "value": 1.0000133528337742,
+            "sens": 0.651,
+            "spec": 0.587,
+            "ppv": 0.33,
+            "npv": 0.843
+          },
+          "cost": {
+            "value": 0.8100553419287989,
+            "sens": 0.955,
+            "spec": 0.175,
+            "ppv": 0.266,
+            "npv": 0.925
+          }
+        }
+      },
+      "fracture": null,
+      "infection": {
+        "score_type": "partial_hazard",
+        "default_mode": "cost",
+        "source_file": "analysis/models/metadata.json",
+        "source_consumer": "analysis/score_calculator.py",
+        "modes": {
+          "youden": {
+            "value": 0.967232574014443,
+            "sens": 0.69,
+            "spec": 0.572,
+            "ppv": 0.345,
+            "npv": 0.849
+          },
+          "cost": {
+            "value": 0.7080597161328281,
+            "sens": 0.994,
+            "spec": 0.058,
+            "ppv": 0.257,
+            "npv": 0.967
+          }
+        }
+      }
+    }
+  },
+  "stroke": {
+    "sCAR_youden": 2.8437,
+    "sCAR_literature": 0.419,
+    "sCAR_note": "Literature thr=0.419 inapplicable to MIMIC-IV (all samples exceed threshold). Youden point used.",
+    "primary_feature": "sCAR",
+    "youden_thr": 2.8437
+  },
+  "fracture": {
+    "sCAR_youden": 2.9655,
+    "sCAR_literature": 0.419,
+    "sCAR_note": "Literature thr=0.419 inapplicable to MIMIC-IV (all samples exceed threshold). Youden point used.",
+    "primary_feature": "sCAR",
+    "youden_thr": 2.9655
+  },
+  "_risk_band_policy": {
+    "decision": "calibrated_probability_primary",
+    "note": "Use calibrated probability (0-1). Z-score bands deprecated.",
+    "bands": {
+      "low": {
+        "min": 0.0,
+        "max": 0.15,
+        "label": "低リスク",
+        "color": "green"
+      },
+      "medium": {
+        "min": 0.15,
+        "max": 0.35,
+        "label": "中リスク",
+        "color": "orange"
+      },
+      "high": {
+        "min": 0.35,
+        "max": 1.0,
+        "label": "高リスク",
+        "color": "red"
+      }
+    },
+    "python_threshold": 0.15,
+    "deprecated": "z_score_bands (-0.5/0.5)"
+  },
+  "cardiac": {
+    "primary_feature": "score",
+    "youden_thr": null
+  },
+  "pneumonia": {
+    "primary_feature": "score",
+    "youden_thr": null
+  },
+  "infection": {
+    "primary_feature": "score",
+    "youden_thr": null
+  },
+  "cancer": {
+    "primary_feature": "score",
+    "youden_thr": null
+  }
+}

@@ -57,6 +57,7 @@
     .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
     .score { padding: 18px; text-align: center; }
     .score-value { font-size: 44px; font-weight: 900; line-height: 1; }
+    .score-probability { display: none; margin-top: 8px; font-size: 12px; font-weight: 700; color: var(--text); }
     .score-z { margin-top: 8px; color: var(--muted); font-size: 11px; }
     .risk-low { color: var(--green); }
     .risk-mid { color: var(--yellow); }
@@ -135,8 +136,13 @@
         <div class="panel score">
           <div class="meta">Risk score</div>
           <div class="score-value" id="riskScore">--</div>
+          <div class="score-probability" id="riskProbability"></div>
           <div class="badge" id="riskBand">未判定</div>
           <div class="score-z" id="riskZ">Z: --</div>
+        </div>
+        <div class="section" id="cancerAnnotationSection" hidden>
+          <div class="section-title">がんマーカー注記</div>
+          <div class="panel" id="cancerAnnotation"></div>
         </div>
         <div class="section">
           <div class="section-title">異常項目</div>
@@ -165,10 +171,6 @@
         <div class="section" id="infectionAnnotationSection" hidden>
           <div class="section-title">感染症マーカー注記</div>
           <div class="panel" id="infectionAnnotation"></div>
-        </div>
-        <div class="section" id="cancerAnnotationSection" hidden>
-          <div class="section-title">がんマーカー注記</div>
-          <div class="panel" id="cancerAnnotation"></div>
         </div>
         <button class="button secondary" id="shareBtn">共有</button>
       </section>
@@ -821,7 +823,9 @@
 	      const d = derivedValues();
 	      const score = Math.round((1 / (1 + Math.exp(-linear))) * 100);
       const disease = currentDisease();
-      lastResult = { score, linear, normLinear, z: zScore(normLinear, disease), band: classifyScore(normLinear, disease), derived: d, disease };
+      const p_oof = score / 100;
+      const riskBlock = window.CDSS?.renderRiskBlock ? window.CDSS.renderRiskBlock(disease, p_oof) : null;
+      lastResult = { score, p_oof, linear, normLinear, z: zScore(normLinear, disease), band: riskBlock?.band ? riskBlock.band.toLowerCase() : classifyScore(normLinear, disease), riskBlock, derived: d, disease };
       renderResult();
     }
 
@@ -831,6 +835,10 @@
       const bandClass = band === "high" ? "risk-high" : band === "mid" ? "risk-mid" : "risk-low";
       $("riskScore").textContent = score === undefined ? "--" : String(score);
       $("riskScore").className = `score-value ${band ? bandClass : ""}`;
+      const probability = lastResult?.riskBlock?.probability;
+      const showProbability = lastResult?.riskBlock?.probability_display_allowed === true && Number.isFinite(Number(probability));
+      $("riskProbability").textContent = showProbability ? `Platt校正確率: ${(Number(probability) * 100).toFixed(1)}%` : "";
+      $("riskProbability").style.display = showProbability ? "block" : "none";
       $("riskBand").textContent = score === undefined ? "未判定" : band === "high" ? "高リスク" : band === "mid" ? "中等度リスク" : "低リスク";
       $("riskBand").className = `badge ${band === "high" ? "danger" : band === "mid" ? "warn" : ""}`;
       $("riskZ").textContent = lastResult?.z === null || lastResult?.z === undefined ? "Z: --" : `Z: ${lastResult.z.toFixed(2)}`;
@@ -948,14 +956,30 @@
     }
 
     function renderCancerAnnotation() {
-      const show = currentDisease() === "cancer";
+      const rb = lastResult?.riskBlock;
+      const boundaryScore = rb?.boundary_proximity_score;
+      const ci95 = rb?.thr_youden_ci95 || rb?.thresholds?.thr_youden_ci95;
+      const hasCi95 = Array.isArray(ci95) && ci95.length >= 2 && ci95[0] !== null && ci95[0] !== undefined && ci95[1] !== null && ci95[1] !== undefined;
+      const show = lastResult?.score !== undefined && rb?.integrity_ok === false && (rb?.integrity_warning || boundaryScore !== null && boundaryScore !== undefined || hasCi95);
       $("cancerAnnotationSection").hidden = !show;
-      if (!show) return;
+      if (!show) {
+        $("cancerAnnotation").innerHTML = "";
+        return;
+      }
+      const integrityWarning = rb?.integrity_warning;
+      const boundaryText = boundaryScore === null || boundaryScore === undefined ? null : String(boundaryScore);
+      const ciText = hasCi95 ? `[${String(ci95[0])}, ${String(ci95[1])}]` : null;
+      const detailRows = [
+        boundaryText ? `Cancer cohort では Youden's J 最適点が Spec90 閾値の境界近傍に位置 (boundary_proximity_score = ${boundaryText})。` : null,
+        ciText ? `95%CI ${ciText} が示すように真の最適点は Mid 帯中央付近の可能性が高く、` : null,
+        "中等度判定例ではカンファレンス補助情報としての扱いを推奨。"
+      ].filter(Boolean);
       $("cancerAnnotation").innerHTML = `
         <div class="row">
           <div class="label">
-            <div class="name">NSE・ProGRP（肺小細胞）/ PIVKA-II・AFP-L3（肝）/ CA15-3（乳）/ CA125（卵巣）/ CYFRA（肺扁平）: MIMIC-IV未収録・測定推奨</div>
-            <div class="meta">GPS=2: 予後不良高リスク / GPS=0: 良好</div>
+            <div class="name">⚠ 中等度帯判定の不確実性</div>
+            ${integrityWarning ? `<div class="meta">${escapeHtml(integrityWarning)}</div>` : ""}
+            ${detailRows.map((text) => `<div class="meta">${escapeHtml(text)}</div>`).join("")}
           </div>
         </div>
       `;
@@ -1236,5 +1260,7 @@
 	      }
 	    });
   </script>
+<script src="./config_loader.js"></script>
+<script>document.addEventListener("DOMContentLoaded",()=>CDSS.loadCDSSConfig("./04_CDSS/config").then(()=>console.log("CDSS config ready",CDSS.CONFIG)));</script>
 </body>
 </html>

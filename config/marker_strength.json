@@ -1,0 +1,32 @@
+{
+  "cardiac": {
+    "primary": ["troponin"],
+    "secondary": ["ntprobnp", "ckmb", "myoglobin"],
+    "fallback": ["lactate", "albumin", "NLR"]
+  },
+  "stroke": {
+    "primary": ["sCAR"],
+    "secondary": ["bun", "NLR", "homocysteine"],
+    "fallback": ["lactate", "albumin", "crp"]
+  },
+  "cancer": {
+    "primary": ["lactate_albumin"],
+    "secondary": ["CAR", "GPS", "cea"],
+    "fallback": ["albumin", "lactate", "NLR"]
+  },
+  "pneumonia": {
+    "primary": ["lactate_albumin"],
+    "secondary": ["CAR", "PF_ratio", "NLR", "SII"],
+    "fallback": ["albumin", "lactate"]
+  },
+  "fracture": {
+    "primary": ["sCAR"],
+    "secondary": ["BAR", "albumin", "d_dimer"],
+    "fallback": ["NLR", "SII", "lactate"]
+  },
+  "infection": {
+    "primary": ["SOFA"],
+    "secondary": ["lactate", "PF_ratio", "creatinine", "AG"],
+    "fallback": ["crp", "albumin", "NLR"]
+  }
+}

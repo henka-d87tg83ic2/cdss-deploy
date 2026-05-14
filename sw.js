@@ -1,4 +1,4 @@
-const CACHE = 'cdss-cache-v3';
+const CACHE = 'cdss-cache-v4';
 const STATIC_ASSETS = [
   '/',
   '/cdss.html',
@@ -7,7 +7,8 @@ const STATIC_ASSETS = [
   '/config/calibration_map.json',
   '/config/disease_panels.json',
   '/config/score_norm.json',
-  '/config/marker_strength.json'
+  '/config/marker_strength.json',
+  'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js'
 ];
 const NETWORK_FIRST = ['/predict'];
 

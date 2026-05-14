@@ -62,9 +62,72 @@
     .risk-low { color: var(--green); }
     .risk-mid { color: var(--yellow); }
     .risk-high { color: var(--red); }
+    .disease-panel-grid { display: grid; gap: 10px; }
+    .disease-card { display: grid; gap: 12px; padding: 12px; background: rgba(17, 24, 39, 0.96); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
+    .disease-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .disease-card-title { min-width: 0; font-size: 16px; font-weight: 900; text-transform: capitalize; }
+    .disease-card-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .disease-summary-box { min-width: 0; padding: 10px; border: 1px solid rgba(39, 50, 65, 0.9); border-radius: 7px; background: rgba(14, 22, 33, 0.72); }
+    .disease-summary-box.risk { border-left: 3px solid var(--yellow); }
+    .disease-summary-box.confidence { border-left: 3px solid var(--blue); }
+    .disease-summary-label { color: var(--muted); font-size: 11px; font-weight: 900; text-transform: uppercase; }
+    .disease-summary-value { margin-top: 4px; font-size: 15px; font-weight: 900; overflow-wrap: anywhere; }
+    .confidence-detail { margin-top: 4px; color: #c8d7e8; font-size: 12px; line-height: 1.35; }
+    .confidence-note { padding: 9px; border: 1px solid rgba(147, 164, 183, 0.24); border-radius: 7px; background: rgba(147, 164, 183, 0.07); color: #c8d7e8; font-size: 12px; line-height: 1.45; }
+    .disease-card-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .disease-metric { min-width: 0; padding: 8px; border: 1px solid rgba(39, 50, 65, 0.82); border-radius: 7px; background: rgba(14, 22, 33, 0.65); }
+    .disease-metric.primary-marker { grid-column: 1 / -1; border-color: rgba(74, 163, 255, 0.42); background: rgba(74, 163, 255, 0.09); }
+    .disease-metric-label { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .disease-metric-value { margin-top: 3px; font-size: 13px; font-weight: 800; overflow-wrap: anywhere; }
+    .confidence-high { color: var(--green); }
+    .confidence-medium { color: var(--yellow); }
+    .confidence-low { color: #ff9f6e; }
+    .confidence-insufficient { color: var(--red); }
+    .risk-bar { margin-top: 12px; display: grid; gap: 6px; }
+    .risk-bar-top { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 800; }
+    .risk-bar-track { height: 10px; overflow: hidden; border-radius: 999px; background: #233143; }
+    .risk-bar-fill { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--green), var(--yellow), var(--red)); }
+    .disease-card-lists { display: grid; gap: 10px; }
+    .disease-list-title { color: #bfd1e5; font-size: 12px; font-weight: 900; }
+    .chip-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+    .chip { display: inline-flex; align-items: center; min-height: 24px; max-width: 100%; padding: 3px 8px; border-radius: 999px; background: #233143; color: #d7e6f7; font-size: 12px; font-weight: 800; overflow-wrap: anywhere; }
+    .chip.missing { background: rgba(244, 197, 66, 0.12); color: #ffe08a; border: 1px solid rgba(244, 197, 66, 0.22); }
+    .chip.recommend { background: rgba(74, 163, 255, 0.13); color: #b9dbff; border: 1px solid rgba(74, 163, 255, 0.24); }
+    .chip.excluded { background: rgba(255, 92, 112, 0.10); color: #ffb3bf; border: 1px solid rgba(255, 92, 112, 0.22); }
+    .recommendation-box { padding: 9px; border: 1px solid rgba(74, 163, 255, 0.24); border-radius: 7px; background: rgba(74, 163, 255, 0.07); }
+    .recommendation-message { margin-top: 7px; color: #c8d7e8; font-size: 12px; line-height: 1.45; }
+    .clinical-disclaimer { margin-top: 8px; padding: 10px 12px; border: 1px solid rgba(74, 163, 255, 0.24); border-radius: 8px; background: rgba(74, 163, 255, 0.08); color: #c8d7e8; font-size: 12px; line-height: 1.4; }
+    .radar-demo-panel { display: grid; gap: 10px; padding: 12px; }
+    .radar-demo-canvas-wrap { position: relative; width: 100%; aspect-ratio: 1 / 1; min-height: 240px; }
+    .radar-demo-canvas-wrap canvas { width: 100% !important; height: 100% !important; display: block; }
+    .radar-demo-summary { display: grid; gap: 10px; }
+    .radar-demo-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .radar-demo-metric { padding: 8px; border: 1px solid rgba(39, 50, 65, 0.82); border-radius: 7px; background: rgba(14, 22, 33, 0.65); }
+    .radar-demo-metric-label { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .radar-demo-score { margin-top: 3px; font-size: 22px; font-weight: 900; color: var(--green); }
+    .radar-demo-note { color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .radar-panel-host { margin-top: 12px; }
+    .radar-panel-host .radar-demo-panel { box-shadow: none; }
+    .risk-radar-inline { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(39, 50, 65, 0.82); }
+    .risk-radar-inline.active { display: grid; gap: 8px; }
+    .risk-radar-inline .radar-demo-metrics { grid-template-columns: 1fr 1fr; }
+    .visual-reference { margin-left: 6px; color: var(--yellow); font-size: 11px; font-weight: 800; }
+    .marker-risk { display: grid; gap: 7px; min-width: 150px; }
+    .marker-risk-top { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 12px; font-weight: 700; }
+    .marker-risk-track { height: 8px; overflow: hidden; border-radius: 999px; background: #233143; }
+    .marker-risk-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--green), var(--yellow), var(--red)); }
     .badge { display: inline-flex; align-items: center; min-height: 24px; padding: 3px 8px; border-radius: 999px; background: #233143; color: #c8d7e8; font-size: 12px; font-weight: 700; }
     .badge.warn { background: rgba(244, 197, 66, 0.15); color: #ffe08a; }
     .badge.danger { background: rgba(255, 92, 112, 0.15); color: #ffb3bf; }
+    .badge.confidence { border: 1px solid rgba(147, 164, 183, 0.32); }
+    .badge.confidence.high { background: rgba(47, 209, 124, 0.13); color: #baf5d5; }
+    .badge.confidence.medium { background: rgba(244, 197, 66, 0.13); color: #ffe08a; }
+    .badge.confidence.low { background: rgba(255, 159, 110, 0.13); color: #ffc29f; }
+    .badge.confidence.insufficient { background: rgba(255, 92, 112, 0.13); color: #ffb3bf; }
+    @media (max-width: 360px) {
+      .disease-card-summary, .disease-card-meta { grid-template-columns: 1fr; }
+      .disease-card-head { align-items: flex-start; flex-direction: column; }
+    }
     .empty { color: var(--muted); padding: 16px; text-align: center; font-size: 13px; }
     .settings-row { grid-template-columns: auto 1fr; }
     .settings-grid { display: grid; grid-template-columns: 1fr 82px 82px; gap: 8px; margin-top: 8px; }
@@ -129,15 +192,29 @@
           <select id="cancerSubtypeSelect"></select>
         </div>
         <div id="inputGroups"></div>
+        <div class="radar-panel-host" id="radarPanels">
+          <div class="section" id="radar-cardiac" hidden></div>
+          <div class="section" id="radar-stroke" hidden></div>
+          <div class="section" id="radar-cancer" hidden></div>
+          <div class="section" id="radar-pneumonia" hidden></div>
+          <div class="section" id="radar-fracture" hidden></div>
+          <div class="section" id="radar-infection" hidden></div>
+        </div>
         <button class="button" id="judgeBtn">判定</button>
       </section>
 
       <section class="page" id="page-result">
+        <div class="section">
+          <div class="section-title">疾患別 biomarker panel</div>
+          <div class="disease-panel-grid" id="diseasePanelCards"></div>
+          <div class="clinical-disclaimer">Recommendations are input-support prompts only. They do not establish diagnosis, mandate testing, direct treatment, or override clinical judgment.</div>
+        </div>
         <div class="panel score">
           <div class="meta">Risk score</div>
           <div class="score-value" id="riskScore">--</div>
           <div class="score-probability" id="riskProbability"></div>
           <div class="badge" id="riskBand">未判定</div>
+          <div class="risk-radar-inline" id="riskRadarIntegration"></div>
           <div class="score-z" id="riskZ">Z: --</div>
         </div>
         <div class="section" id="cancerAnnotationSection" hidden>
@@ -151,6 +228,30 @@
         <div class="section">
           <div class="section-title">派生指標</div>
           <div class="panel" id="derivedList"><div class="empty">算出可能な指標がありません</div></div>
+        </div>
+        <div class="section" id="radar-demo" hidden>
+          <div class="section-title">Radar / Circularity Index demo</div>
+          <div class="panel radar-demo-panel">
+            <div class="radar-demo-summary">
+              <div>
+                <div class="name">Biomarker shape prototype</div>
+                <div class="radar-demo-note" id="radarDemoNote">NLR/SII are visualization candidates only and are not used as Cox predictors.</div>
+              </div>
+              <div class="radar-demo-metrics">
+                <div class="radar-demo-metric">
+                  <div class="radar-demo-metric-label">Circularity Index / 均衡指数</div>
+                  <div class="radar-demo-score" id="radarDemoCircularity">--</div>
+                </div>
+                <div class="radar-demo-metric">
+                  <div class="radar-demo-metric-label">Radar Area Index / 異常面積指数</div>
+                  <div class="radar-demo-score" id="radarDemoArea">--</div>
+                </div>
+              </div>
+            </div>
+            <div class="radar-demo-canvas-wrap">
+              <canvas id="radarDemoCanvas" width="320" height="320" aria-label="Radar visualization prototype"></canvas>
+            </div>
+          </div>
         </div>
         <div class="section" id="cardiacTimelineSection" hidden>
           <div class="section-title">心筋マーカー推移</div>
@@ -246,12 +347,70 @@
       liver: ["afp_maternal_screen", "cea", "crp", "albumin"],
       other: ["cea", "crp", "albumin"]
     };
-    const FRACTURE_PANEL_ITEMS = ["platelet", "neutrophils", "lymphocytes", "albumin", "pth", "alp", "d_dimer"];
+    const SCAR_PRIMARY_DISEASES = ["stroke", "fracture"];
+    const FRACTURE_PANEL_ITEMS = ["platelet", "neutrophils", "lymphocytes", "albumin", "creatinine", "bun", "pth", "alp", "d_dimer"];
     const INFECTION_REQUIRED_ITEMS = ["pao2", "fio2", "platelet", "bilirubin_total", "creatinine"];
+    const REJECTED_ADOPTION_DECISIONS = ["reject_due_to_missingness", "reject_due_to_low_events", "reject_due_to_auc", "reject_due_to_non_significance", "rejected", "routine_rejected"];
+    const CONFIDENCE_COPY = {
+      High: "Primary marker available",
+      Medium: "Secondary marker only",
+      Low: "Fallback marker only",
+      Insufficient: "No usable marker"
+    };
+    const CONFIDENCE_EXPLANATION = "Confidence reflects available biomarker coverage, not mortality probability. Risk score can be high even when confidence is low.";
+    const RECOMMENDATION_EXPLANATION = "Recommendation is for input completeness, not a treatment order.";
+    const FALLBACK_MARKER_PANEL_CONFIG = {
+      cardiac: { primary: ["troponin"], secondary: ["ntprobnp", "ckmb", "myoglobin"], fallback: ["lactate", "albumin", "NLR"] },
+      stroke: { primary: ["sCAR"], secondary: ["bun", "NLR", "homocysteine"], fallback: ["lactate", "albumin", "crp"] },
+      cancer: { primary: ["lactate_albumin"], secondary: ["CAR", "GPS", "cea"], fallback: ["albumin", "lactate", "NLR"] },
+      pneumonia: { primary: ["lactate_albumin"], secondary: ["CAR", "PF_ratio", "NLR", "SII"], fallback: ["albumin", "lactate"] },
+      fracture: { primary: ["sCAR"], secondary: ["BAR", "albumin", "d_dimer"], fallback: ["NLR", "SII", "lactate"] },
+      infection: { primary: ["SOFA"], secondary: ["lactate", "PF_ratio", "creatinine", "AG"], fallback: ["crp", "albumin", "NLR"] }
+    };
+    const MARKER_RAW_LABS = {
+      sCAR: ["creatinine", "albumin"],
+      CAR: ["crp", "albumin"],
+      BAR: ["bun", "albumin"],
+      SII: ["platelet", "neutrophils", "lymphocytes"],
+      AG: ["sodium", "chloride", "bicarbonate"],
+      NLR: ["neutrophils", "lymphocytes"],
+      GPS: ["crp", "albumin"],
+      mGPS: ["crp", "albumin"],
+      PF_ratio: ["pao2", "fio2"],
+      SOFA: ["pao2", "fio2", "platelet", "bilirubin_total", "creatinine", "gcs", "map"],
+      lactate_albumin: ["lactate", "albumin"],
+      troponin: ["troponin_i"]
+    };
+    const RECOMMENDATION_LABELS = {
+      platelet: "platelet",
+      neutrophils: "neutrophils",
+      lymphocytes: "lymphocytes",
+      albumin: "albumin",
+      creatinine: "creatinine",
+      crp: "CRP",
+      bun: "BUN",
+      sodium: "sodium",
+      chloride: "chloride",
+      bicarbonate: "bicarbonate",
+      lactate: "lactate",
+      pao2: "PaO2",
+      fio2: "FiO2",
+      bilirubin_total: "bilirubin",
+      gcs: "GCS",
+      map: "MAP",
+      troponin_i: "troponin I",
+      ntprobnp: "NT-proBNP",
+      ckmb: "CK-MB",
+      myoglobin: "myoglobin",
+      homocysteine: "homocysteine",
+      cea: "CEA",
+      d_dimer: "D-Dimer"
+    };
     const DEFAULT_MASTER = {
       items: [
         { id: "lactate", name_jp: "乳酸", category_jp: "血液ガス", unit: "mmol/L", ref_low: 0.5, ref_high: 2.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], "info": "【乳酸】組織低灌流・嫌気性代謝の指標。>2.0 mmol/L で予後不良。MIMIC-IV Cox β=0.10〜0.25（全6疾患p<0.05）。", high_text: "組織低灌流や重症感染を示唆します。", low_text: "基準下限未満です。" },
         { id: "albumin", name_jp: "アルブミン", category_jp: "生化学", unit: "g/dL", ref_low: 3.5, ref_high: 5.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], "info": "【アルブミン】栄養状態・炎症・予備能の統合指標。<3.5 g/dL で予後不良。全6疾患で死亡リスク増加（HR 0.52〜0.87）。stroke/fracture では p≥0.05（非有意）。", high_text: "脱水などの影響を考慮します。", low_text: "低栄養、炎症、予備能低下を示唆します。" },
+        { id: "scar", name_jp: "sCAR", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 0.5, tier: 1, enabled: false, derived: true, diseases: ["stroke", "fracture"], "info": "【sCAR: creatinine/albumin】腎機能低下と低栄養・炎症を統合する派生指標。stroke単変量AUC=0.708、fracture単変量AUC=0.8563。fractureはEPV制約により単変量表示を優先。" },
         { id: "nlr", name_jp: "NLR", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 5, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], "info": "【NLR: 好中球/リンパ球比】全身炎症と免疫抑制のバランス指標。>5 で炎症亢進。cardiac/stroke/pneumonia/infection で p<0.05。cancer/fracture は非有意。" },
         { id: "sii", name_jp: "SII", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 600, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], "info": "【SII: 全身免疫炎症指数】血小板×好中球/リンパ球。>600 で高リスク。MIMIC-IV解析では全6疾患でβ≈0（予後独立性なし・参考値として表示）。" },
         { id: "crp", name_jp: "CRP", category_jp: "炎症", unit: "mg/dL", ref_low: 0, ref_high: 0.3, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], "info": "【CRP】急性炎症反応蛋白。感染後6〜8時間で上昇開始、ピーク48〜72h。診断オッズ比5.43（PCT=14.69より低い）。肺炎では4日目50%未満低下→30日死亡リスク増加。", high_text: "炎症反応の上昇を示唆します。", low_text: "基準範囲内です。" },
@@ -280,7 +439,11 @@
         { id: "pao2", name_jp: "PaO2", category_jp: "呼吸", unit: "mmHg", ref_low: 80, ref_high: 100, tier: 2, enabled: false, diseases: ["pneumonia", "infection", "cardiac"], high_text: "酸素化は保たれています。", low_text: "酸素化低下を示唆します。" },
         { id: "fio2", name_jp: "FiO2", category_jp: "呼吸", unit: "%", ref_low: 21, ref_high: 100, tier: 2, enabled: false, diseases: ["pneumonia", "infection", "cardiac"], high_text: "高濃度酸素投与を要している可能性があります。", low_text: "入力値を確認してください。" },
         { id: "bilirubin_total", itemid: 50885, label: "Bilirubin, Total", name_jp: "Bilirubin, Total", category_jp: "SOFA", unit: "mg/dL", ref_low: 0, ref_high: 1.2, tier: 1, enabled: true, diseases: ["infection"], high_text: "SOFA肝機能スコア上昇を考慮します。", low_text: "基準範囲内です。" },
-        { id: "creatinine", name_jp: "クレアチニン", category_jp: "腎機能", unit: "mg/dL", ref_low: 0.6, ref_high: 1.1, tier: 2, enabled: false, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], high_text: "腎機能低下を示唆します。", low_text: "筋肉量低下などを考慮します。" }
+        { id: "creatinine", name_jp: "クレアチニン", category_jp: "腎機能", unit: "mg/dL", ref_low: 0.6, ref_high: 1.1, tier: 2, enabled: false, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], high_text: "腎機能低下を示唆します。", low_text: "筋肉量低下などを考慮します。" },
+        { id: "bun", itemid: 51006, label: "Urea Nitrogen", name_jp: "BUN", category_jp: "腎機能", unit: "mg/dL", ref_low: 7, ref_high: 20, tier: 2, enabled: true, diseases: ["stroke", "fracture"], high_text: "腎機能低下、脱水、蛋白異化亢進を考慮します。", low_text: "基準下限未満です。" },
+        { id: "sodium", itemid: 50983, label: "Sodium", name_jp: "Na", category_jp: "電解質", unit: "mEq/L", ref_low: 135, ref_high: 145, tier: 2, enabled: false, diseases: ["infection", "pneumonia"], high_text: "高Na血症を考慮します。", low_text: "低Na血症を考慮します。" },
+        { id: "chloride", itemid: 50902, label: "Chloride", name_jp: "Cl", category_jp: "電解質", unit: "mEq/L", ref_low: 98, ref_high: 107, tier: 2, enabled: false, diseases: ["infection", "pneumonia"], high_text: "高Cl血症を考慮します。", low_text: "低Cl血症を考慮します。" },
+        { id: "bicarbonate", itemid: 50882, label: "Bicarbonate", name_jp: "HCO3", category_jp: "電解質", unit: "mEq/L", ref_low: 22, ref_high: 28, tier: 2, enabled: false, diseases: ["infection", "pneumonia"], high_text: "代謝性アルカローシスなどを考慮します。", low_text: "代謝性アシドーシスなどを考慮します。" }
       ]
     };
 
@@ -302,9 +465,10 @@
 	    let scoreNorm = {};
 	    let settings = null;
 	    let lastResult = null;
-	    let casePack = [];
+    let casePack = [];
 	    let caseFilter = "all";
 	    let caseBannerTimer = null;
+	    let MARKER_PANEL_CONFIG = FALLBACK_MARKER_PANEL_CONFIG;
 	    let COEF_CONFIG = null;
 
     const $ = (id) => document.getElementById(id);
@@ -345,7 +509,12 @@
 	    }
 
     async function loadMaster() {
-      master = normalizeMaster(DEFAULT_MASTER);
+      try {
+        const res = await fetch("lab_master_v1.json", { cache: "no-store" });
+        if (res.ok) master = normalizeMaster(await res.json());
+      } catch (_) {
+        master = normalizeMaster(DEFAULT_MASTER);
+      }
       try {
         const normRes = await fetch("cdss/score_norm.json", { cache: "no-store" });
         if (normRes.ok) scoreNorm = await normRes.json();
@@ -355,6 +524,17 @@
       settings = loadSettings();
       renderAll();
       registerServiceWorker();
+    }
+
+    async function loadMarkerStrengthConfig() {
+      try {
+        const res = await fetch("04_CDSS/config/marker_strength.json", { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        MARKER_PANEL_CONFIG = normalizeMarkerStrength(await res.json());
+      } catch (e) {
+        console.warn("marker_strength.json load failed, using embedded fallback:", e);
+        MARKER_PANEL_CONFIG = normalizeMarkerStrength(FALLBACK_MARKER_PANEL_CONFIG);
+      }
     }
 
     function normalizeMaster(raw) {
@@ -368,6 +548,29 @@
         if (!mergedItems.some((candidate) => itemId(candidate) === id)) mergedItems.push({ ...item, id });
       });
       return { items: mergedItems };
+    }
+
+    function normalizeMarkerStrength(raw) {
+      const out = {};
+      DISEASES.forEach(([disease]) => {
+        const source = raw?.[disease] || FALLBACK_MARKER_PANEL_CONFIG[disease] || {};
+        out[disease] = {
+          primary: asMarkerList(source.primary),
+          secondary: asMarkerList(source.secondary),
+          fallback: asMarkerList(source.fallback),
+          exploratory_if_available: asMarkerList(source.exploratory_if_available),
+          rejected_markers: asMarkerList(source.rejected_markers),
+          adoption_decision: source.adoption_decision && typeof source.adoption_decision === "object" ? source.adoption_decision : {},
+          missingness: source.missingness && typeof source.missingness === "object" ? source.missingness : {},
+          validation_note: typeof source.validation_note === "string" ? source.validation_note : ""
+        };
+      });
+      return out;
+    }
+
+    function asMarkerList(value) {
+      if (!Array.isArray(value)) return [];
+      return value.map((item) => String(item)).filter(Boolean);
     }
 
     function zScore(linearScore, disease) {
@@ -434,7 +637,8 @@
       return master.items.filter((item) => {
         if (item.derived) return false;
         const id = itemId(item);
-        const forced = (disease === "fracture" && FRACTURE_PANEL_ITEMS.includes(id)) || (disease === "infection" && INFECTION_REQUIRED_ITEMS.includes(id));
+        const scarForced = SCAR_PRIMARY_DISEASES.includes(disease) && (id === "albumin" || id === "creatinine");
+        const forced = scarForced || (disease === "fracture" && FRACTURE_PANEL_ITEMS.includes(id)) || (disease === "infection" && INFECTION_REQUIRED_ITEMS.includes(id));
         const enabled = settings.perItem[id]?.enabled || forced;
         const diseases = item.diseases || item.disease || [];
         const diseaseOk = !Array.isArray(diseases) || diseases.length === 0 || diseases.includes(disease);
@@ -468,6 +672,11 @@
       const loadedSii = Number(inputValues.sii);
       const crp = Number(inputValues.crp);
       const alb = Number(inputValues.albumin);
+      const bun = Number(inputValues.bun);
+      const creatinine = Number(inputValues.creatinine);
+      const sodium = Number(inputValues.sodium);
+      const chloride = Number(inputValues.chloride);
+      const bicarbonate = Number(inputValues.bicarbonate);
       const pao2 = Number(inputValues.pao2);
       const fio2 = Number(inputValues.fio2);
       const sofa = sofaScore();
@@ -476,7 +685,14 @@
       else if (loadedNlr > 0) out.NLR = loadedNlr;
       if (n > 0 && l > 0 && p > 0) out.SII = (p * n) / l;
       else if (loadedSii > 0) out.SII = loadedSii;
-      if (!Number.isNaN(crp) && !Number.isNaN(alb)) out.GPS = (crp > 1 ? 1 : 0) + (alb < 3.5 ? 1 : 0);
+      if (!Number.isNaN(crp) && !Number.isNaN(alb)) {
+        out.GPS = (crp > 1 ? 1 : 0) + (alb < 3.5 ? 1 : 0);
+        out.mGPS = out.GPS;
+      }
+      out.CAR = Number.isFinite(crp) && crp >= 0 && Number.isFinite(alb) && alb > 0 ? crp / alb : null;
+      out.sCAR = Number.isFinite(creatinine) && creatinine > 0 && Number.isFinite(alb) && alb > 0 ? creatinine / alb : null;
+      out.BAR = Number.isFinite(bun) && bun >= 0 && Number.isFinite(alb) && alb > 0 ? bun / alb : null;
+      out.AG = Number.isFinite(sodium) && Number.isFinite(chloride) && Number.isFinite(bicarbonate) ? sodium - chloride - bicarbonate : null;
       if (pao2 > 0 && fio2 > 0) out.PF_ratio = pao2 / (fio2 > 1 ? fio2 / 100 : fio2);
       if (currentDisease() === "infection" && sofa !== null) out.SOFA = sofa;
       return out;
@@ -495,7 +711,7 @@
 
 	    function showConfigError(message) {
 	      const status = document.createElement("div");
-	      status.className = "badge danger";
+	      status.className = "clinical-disclaimer";
 	      status.textContent = `Model configuration error: ${message}`;
 	      document.querySelector("main")?.prepend(status);
 	    }
@@ -598,6 +814,7 @@
       renderInput();
       renderSettings();
       renderResult();
+      updateRadar(currentDisease());
     }
 
     function renderHeader() {
@@ -841,9 +1058,12 @@
       $("riskProbability").style.display = showProbability ? "block" : "none";
       $("riskBand").textContent = score === undefined ? "未判定" : band === "high" ? "高リスク" : band === "mid" ? "中等度リスク" : "低リスク";
       $("riskBand").className = `badge ${band === "high" ? "danger" : band === "mid" ? "warn" : ""}`;
+      appendRadarToRiskBlock(lastResult?.disease || currentDisease(), collectRadarRawValues());
       $("riskZ").textContent = lastResult?.z === null || lastResult?.z === undefined ? "Z: --" : `Z: ${lastResult.z.toFixed(2)}`;
+      renderDiseasePanelCards();
       renderAbnormalList();
       renderDerivedList();
+      renderRadarDemo();
       renderCardiacTimeline();
       renderStrokeAnnotation();
       renderPneumoniaAnnotation();
@@ -876,10 +1096,425 @@
       const rows = [];
       if (d.NLR !== undefined) rows.push(derivedRow("NLR", d.NLR, d.NLR > 5 ? "高値: 炎症性ストレス上昇" : "閾値5未満", markerById("nlr")));
       if (d.SII !== undefined) rows.push(derivedRow("SII", d.SII, d.SII > 1000 ? "高値: 全身性炎症上昇" : "閾値1000未満", markerById("sii")));
+      if (d.sCAR !== null && d.sCAR !== undefined) rows.push(derivedRow("sCAR", d.sCAR, "creatinine / albumin", markerById("scar")));
+      if (d.BAR !== null && d.BAR !== undefined) rows.push(derivedRow("BAR", d.BAR, "BUN / albumin"));
+      if (d.CAR !== null && d.CAR !== undefined) rows.push(derivedRow("CAR", d.CAR, "CRP / albumin"));
+      if (d.AG !== null && d.AG !== undefined) rows.push(derivedRow("AG", d.AG, "sodium - chloride - bicarbonate"));
       if (d.GPS !== undefined) rows.push(derivedRow("GPS", d.GPS, d.GPS >= 1 ? "炎症/低栄養リスクあり" : "0点"));
       if (d.PF_ratio !== undefined) rows.push(derivedRow("PF ratio", d.PF_ratio, d.PF_ratio < 300 ? "酸素化低下" : "300以上"));
       if (d.SOFA !== undefined) rows.push(derivedRow("SOFA", d.SOFA, `SOFA: ${d.SOFA}点 (Sepsis-3: ≥2点かつ感染疑いで敗血症診断)`));
       $("derivedList").innerHTML = rows.length ? rows.join("") : `<div class="empty">算出可能な指標がありません</div>`;
+    }
+
+    function collectRadarRawValues() {
+      const d = lastResult?.derived || derivedValues();
+      return {
+        lactate: finiteValue(inputValues.lactate),
+        albumin: finiteValue(inputValues.albumin),
+        nlr: d.NLR,
+        sii: d.SII,
+        scar: d.sCAR,
+        gps: d.GPS
+      };
+    }
+
+    function updateRadar(disease = currentDisease()) {
+      DISEASES.forEach(([id]) => {
+        const panel = $(`radar-${id}`);
+        if (panel) panel.hidden = id !== disease;
+      });
+      window.CDSS?.renderRadarPanel?.(`radar-${disease}`, disease, collectRadarRawValues());
+    }
+
+    function appendRadarToRiskBlock(disease, rawValues) {
+      const target = $("riskRadarIntegration");
+      const metrics = window.CDSS?.radarPrototype?.compute?.(rawValues);
+      if (!target || !metrics || metrics.available < 3) {
+        if (target) {
+          target.classList.remove("active");
+          target.innerHTML = "";
+        }
+        return;
+      }
+      target.classList.add("active");
+      target.innerHTML = `
+        <div class="radar-demo-metrics">
+          <div class="radar-demo-metric">
+            <div class="radar-demo-metric-label">Circularity Index / 均衡指数</div>
+            <div class="radar-demo-score">${metrics.circularity === null ? "--" : `CI ${escapeHtml(metrics.circularity.toFixed(3))}`}</div>
+          </div>
+          <div class="radar-demo-metric">
+            <div class="radar-demo-metric-label">Radar Area Index / 異常面積指数</div>
+            <div class="radar-demo-score">${metrics.area === null ? "--" : `Area ${escapeHtml(metrics.area.toFixed(3))}`}</div>
+          </div>
+        </div>
+        <div class="radar-demo-note">${escapeHtml(diseaseName(disease))}: <span class="visual-reference">NLR/SII 可視化参考値</span></div>
+      `;
+    }
+
+    function renderRadarDemo() {
+      const section = $("radar-demo");
+      const module = window.CDSS?.radarPrototype;
+      if (!section || !module) {
+        if (section) section.hidden = true;
+        return;
+      }
+      module.render({
+        canvas: $("radarDemoCanvas"),
+        circularityEl: $("radarDemoCircularity"),
+        areaEl: $("radarDemoArea"),
+        noteEl: $("radarDemoNote"),
+        section,
+        disease: lastResult?.disease || currentDisease(),
+        score: lastResult?.score,
+        values: collectRadarRawValues()
+      });
+    }
+
+    function finiteValue(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function renderDiseasePanelCards() {
+      $("diseasePanelCards").innerHTML = DISEASES.map(([id, name]) => renderDiseasePanelCard(id, name)).join("");
+    }
+
+    function renderDiseasePanelCard(id, name) {
+      const assessment = assessDiseasePanel(id);
+      const confidenceClass = assessment.confidence.toLowerCase();
+      const recommendation = assessment.recommendation;
+      return `
+        <article class="disease-card">
+          <div class="disease-card-head">
+            <div class="disease-card-title">${escapeHtml(name)}</div>
+            <span class="badge">Markers: ${assessment.availableCount}/${assessment.totalCount}</span>
+          </div>
+          <div class="disease-card-summary">
+            <div class="disease-summary-box risk">
+              <div class="disease-summary-label">Risk Level</div>
+              <div class="disease-summary-value risk-${riskClassName(assessment.level)}">${escapeHtml(assessment.level)}</div>
+            </div>
+            <div class="disease-summary-box confidence">
+              <div class="disease-summary-label">Confidence</div>
+              <div class="disease-summary-value confidence-${confidenceClass}">${escapeHtml(assessment.confidence)}</div>
+              <div class="confidence-detail">${escapeHtml(assessment.confidenceReason)}</div>
+            </div>
+          </div>
+          <div class="risk-bar" aria-label="${escapeAttr(name)} risk level">
+            <div class="risk-bar-top">
+              <span>Risk estimate</span>
+              <span>${assessment.percent}%</span>
+            </div>
+            <div class="risk-bar-track">
+              <div class="risk-bar-fill" style="width: ${assessment.percent}%"></div>
+            </div>
+          </div>
+          <div class="disease-card-meta">
+            <div class="disease-metric">
+              <div class="disease-metric-label">Available Markers</div>
+              <div class="disease-metric-value">${assessment.availableCount}/${assessment.totalCount}</div>
+            </div>
+            <div class="disease-metric">
+              <div class="disease-metric-label">Missing Markers</div>
+              <div class="disease-metric-value">${assessment.missing.length}</div>
+            </div>
+            <div class="disease-metric primary-marker">
+              <div class="disease-metric-label">Primary Marker</div>
+              <div class="disease-metric-value">${escapeHtml(assessment.primaryStatus)}</div>
+            </div>
+          </div>
+          <div class="disease-card-lists">
+            <div class="confidence-note">${escapeHtml(CONFIDENCE_EXPLANATION)}</div>
+            <div>
+              <div class="disease-list-title">Risk Drivers</div>
+              <div class="chip-list">${chips(assessment.drivers, "No active drivers")}</div>
+            </div>
+            <div>
+              <div class="disease-list-title">Missing Recommended Markers</div>
+              <div class="chip-list">${chips(assessment.missing, "None", "missing")}</div>
+            </div>
+            <div>
+              <div class="disease-list-title">Excluded From Routine Confidence</div>
+              <div class="chip-list">${chips(assessment.excluded, "None", "excluded")}</div>
+            </div>
+            <div class="recommendation-box">
+              <div class="disease-list-title">Recommended Next Input</div>
+              <div class="recommendation-message">To improve confidence, add:</div>
+              <div class="chip-list">${chips(recommendation.inputs, "No critical marker missing", recommendation.inputs.length ? "recommend" : "")}</div>
+              <div class="recommendation-message">${escapeHtml(recommendation.message)}</div>
+              <div class="recommendation-message">${escapeHtml(RECOMMENDATION_EXPLANATION)}</div>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+
+    function riskClassName(level) {
+      if (level === "High") return "high";
+      if (level === "Moderate") return "mid";
+      if (level === "Low") return "low";
+      return "mid";
+    }
+
+    function assessDiseasePanel(disease) {
+      const config = MARKER_PANEL_CONFIG[disease] || FALLBACK_MARKER_PANEL_CONFIG[disease];
+      const routine = routinePanelConfig(config);
+      const tokens = allMarkerTokens(routine);
+      const primaryAssessments = routine.primary.map(markerAssessment).filter(Boolean);
+      const secondaryAssessments = routine.secondary.map(markerAssessment).filter(Boolean);
+      const fallbackAssessments = routine.fallback.map(markerAssessment).filter(Boolean);
+      const allAssessments = tokens.map(markerAssessment).filter(Boolean);
+      const available = allAssessments.filter((item) => item.available);
+      const primaryAvailable = primaryAssessments.filter((item) => item.available);
+      const secondaryAvailable = secondaryAssessments.filter((item) => item.available);
+      const fallbackAvailable = fallbackAssessments.filter((item) => item.available);
+      const primaryLabel = routine.primary.map(markerDisplayName).join(" / ");
+      const primaryStatus = primaryAvailable.length
+        ? `Available: ${primaryAvailable.map((item) => item.label).join(" / ")}`
+        : `Missing: ${primaryLabel || "None"}`;
+      const drivers = available.filter((item) => item.points > 0).map((item) => `${item.label}: ${item.display}`);
+      const missing = tokens.filter((token) => !markerAssessment(token)?.available).map(markerDisplayName);
+      const points = available.reduce((sum, item) => sum + item.points, 0);
+      const level = available.length === 0 ? "Unknown" : points >= 4 ? "High" : points >= 2 ? "Moderate" : "Low";
+      let confidence = "Insufficient";
+      if (primaryAvailable.length) confidence = "High";
+      else if (secondaryAvailable.length) confidence = "Medium";
+      else if (fallbackAvailable.length) confidence = "Low";
+      const recommendation = nextInputRecommendation(disease, config);
+      const excluded = excludedRoutineMarkers(config);
+      return {
+        level,
+        confidence,
+        confidenceReason: CONFIDENCE_COPY[confidence],
+        primaryStatus,
+        availableCount: available.length,
+        totalCount: allAssessments.length,
+        drivers,
+        missing,
+        excluded,
+        recommendation,
+        percent: level === "Unknown" ? 0 : Math.min(100, Math.max(8, points * 20 + available.length * 5))
+      };
+    }
+
+    function routinePanelConfig(config) {
+      return {
+        primary: (config.primary || []).filter((token) => isRoutineConfidenceMarker(config, token)),
+        secondary: (config.secondary || []).filter((token) => isRoutineConfidenceMarker(config, token)),
+        fallback: (config.fallback || []).filter((token) => isRoutineConfidenceMarker(config, token))
+      };
+    }
+
+    function isRoutineConfidenceMarker(config, token) {
+      const decision = adoptionDecisionForToken(config, token);
+      return !REJECTED_ADOPTION_DECISIONS.includes(decision);
+    }
+
+    function adoptionDecisionForToken(config, token) {
+      const decisions = config.adoption_decision || {};
+      const lower = String(token).toLowerCase();
+      const match = Object.keys(decisions).find((key) => key.toLowerCase() === lower);
+      return match ? normalizeAdoptionDecision(decisions[match]) : "";
+    }
+
+    function normalizeAdoptionDecision(value) {
+      return String(value || "").trim().toLowerCase().replace(/^reject_due_/, "reject_due_to_");
+    }
+
+    function excludedRoutineMarkers(config) {
+      const seen = new Set();
+      const rejected = [...(config.primary || []), ...(config.secondary || []), ...(config.fallback || []), ...(config.exploratory_if_available || []), ...(config.rejected_markers || [])]
+        .filter((token) => {
+          const key = String(token);
+          if (seen.has(key)) return false;
+          seen.add(key);
+          const decision = adoptionDecisionForToken(config, token);
+          return REJECTED_ADOPTION_DECISIONS.includes(decision) || (config.rejected_markers || []).includes(token) || (config.exploratory_if_available || []).includes(token);
+        });
+      return rejected.map((token) => {
+        const decision = adoptionDecisionForToken(config, token) || ((config.exploratory_if_available || []).includes(token) ? "exploratory_if_available" : "rejected");
+        return `${markerDisplayName(token)}: ${decision}`;
+      });
+    }
+
+    function allMarkerTokens(config) {
+      const seen = new Set();
+      return [...config.primary, ...config.secondary, ...config.fallback].filter((id) => {
+        if (seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
+    }
+
+    function nextInputRecommendation(disease, config) {
+      const routine = routinePanelConfig(config);
+      const primary = firstUnavailableToken(routine.primary || []);
+      if (primary) return recommendationForToken(disease, primary, "primary");
+      const secondary = firstUnavailableToken(routine.secondary || []);
+      if (secondary) return recommendationForToken(disease, secondary, "secondary");
+      const fallback = firstUnavailableToken(routine.fallback || []);
+      if (fallback) return recommendationForToken(disease, fallback, "fallback");
+      const exploratory = firstUnavailableToken(exploratoryRecommendationTokens(config));
+      if (exploratory) return recommendationForToken(disease, exploratory, "exploratory");
+      const diseaseLabel = diseaseRecommendationName(disease);
+      return {
+        token: null,
+        inputs: [],
+        message: `${diseaseLabel}: No confidence marker input is currently missing.`
+      };
+    }
+
+    function exploratoryRecommendationTokens(config) {
+      return (config.exploratory_if_available || []).filter((token) => isExploratoryRecommendationMarker(config, token));
+    }
+
+    function isExploratoryRecommendationMarker(config, token) {
+      const decision = adoptionDecisionForToken(config, token);
+      return !REJECTED_ADOPTION_DECISIONS.includes(decision) && !(config.rejected_markers || []).includes(token);
+    }
+
+    function firstUnavailableToken(tokens) {
+      return tokens.find((token) => !markerAssessment(token)?.available) || null;
+    }
+
+    function recommendationForToken(disease, token, layer) {
+      const missingRawLabs = missingRawLabsForToken(token);
+      const inputLabels = missingRawLabs.map(recommendationInputLabel);
+      const markerName = markerDisplayName(token);
+      const diseaseLabel = diseaseRecommendationName(disease);
+      const inputText = joinRecommendationList(inputLabels);
+      const layerText = ({
+        primary: "primary",
+        secondary: "secondary",
+        fallback: "fallback",
+        exploratory: "exploratory"
+      }[layer] || "panel");
+      const message = inputLabels.length
+        ? `${diseaseLabel}: ${inputText} may improve confidence for ${layerText} marker ${markerName}.`
+        : `${diseaseLabel}: ${markerName} is already complete for ${layerText} marker coverage.`;
+      return { token, inputs: inputLabels, message };
+    }
+
+    function missingRawLabsForToken(token) {
+      const rawLabs = MARKER_RAW_LABS[token] || [token];
+      return rawLabs.filter((id) => !hasInputValue(id));
+    }
+
+    function hasInputValue(id) {
+      return Number.isFinite(valueFor(id));
+    }
+
+    function recommendationInputLabel(id) {
+      return RECOMMENDATION_LABELS[id] || markerDisplayName(id);
+    }
+
+    function diseaseRecommendationName(id) {
+      return ({
+        cardiac: "Cardiac",
+        stroke: "Stroke",
+        cancer: "Cancer",
+        pneumonia: "Pneumonia",
+        fracture: "Fracture",
+        infection: "Infection"
+      }[id] || id);
+    }
+
+    function joinRecommendationList(items) {
+      if (items.length <= 1) return items[0] || "";
+      if (items.length === 2) return `${items[0]} and/or ${items[1]}`;
+      return `${items.slice(0, -1).join(", ")}, and/or ${items[items.length - 1]}`;
+    }
+
+    function markerAssessment(token) {
+      const d = derivedValues();
+      if (token === "lactate_albumin") return pairAssessment("lactate+albumin", ["lactate", "albumin"]);
+      if (token === "troponin") return thresholdAssessment("troponin", valueFor("troponin_i"), 0.04, 0.10, "ng/mL");
+      if (token === "sCAR") return thresholdAssessment("sCAR", d.sCAR, 0.3, 0.5, "");
+      if (token === "CAR") return thresholdAssessment("CAR", d.CAR, 0.3, 1.0, "");
+      if (token === "GPS") return thresholdAssessment("GPS", d.GPS, 1, 2, "");
+      if (token === "mGPS") return thresholdAssessment("mGPS", d.mGPS, 1, 2, "");
+      if (token === "NLR") return thresholdAssessment("NLR", d.NLR, 3, 5, "");
+      if (token === "SII") return thresholdAssessment("SII", d.SII, 600, 1000, "");
+      if (token === "BAR") return thresholdAssessment("BAR", d.BAR, 5, 7, "");
+      if (token === "AG") return thresholdAssessment("AG", d.AG, 12, 18, "mEq/L");
+      if (token === "PF_ratio") return lowThresholdAssessment("PF ratio", d.PF_ratio, 300, 200, "");
+      if (token === "SOFA") return thresholdAssessment("SOFA", d.SOFA, 2, 6, "");
+      if (token === "albumin") return lowThresholdAssessment("albumin", valueFor("albumin"), 3.5, 3.0, "g/dL");
+      return thresholdAssessment(markerDisplayName(token), valueFor(token), markerModerateCutoff(token), markerHighCutoff(token), itemUnit(markerById(token) || {}));
+    }
+
+    function pairAssessment(label, ids) {
+      const values = ids.map((id) => [id, valueFor(id)]);
+      const availableValues = values.filter(([, value]) => Number.isFinite(value));
+      if (availableValues.length !== ids.length) return { label, available: false, points: 0, display: "missing" };
+      const points = availableValues.reduce((sum, [id, value]) => sum + markerPoints(id, value), 0);
+      const display = availableValues.map(([id, value]) => `${markerDisplayName(id)} ${formatMarkerValue(value)}`).join(" / ");
+      return { label, available: true, points, display };
+    }
+
+    function thresholdAssessment(label, value, moderateCutoff, highCutoff, unit) {
+      if (!Number.isFinite(value)) return { label, available: false, points: 0, display: "missing" };
+      const points = value >= highCutoff ? 2 : value >= moderateCutoff ? 1 : 0;
+      return { label, available: true, points, display: `${formatMarkerValue(value)}${unit ? ` ${unit}` : ""}` };
+    }
+
+    function lowThresholdAssessment(label, value, moderateCutoff, highCutoff, unit) {
+      if (!Number.isFinite(value)) return { label, available: false, points: 0, display: "missing" };
+      const points = value < highCutoff ? 2 : value < moderateCutoff ? 1 : 0;
+      return { label, available: true, points, display: `${formatMarkerValue(value)}${unit ? ` ${unit}` : ""}` };
+    }
+
+    function markerPoints(id, value) {
+      if (!Number.isFinite(value)) return 0;
+      if (id === "albumin") return value < 3.0 ? 2 : value < 3.5 ? 1 : 0;
+      if (id === "lactate") return value > 4 ? 2 : value > 2 ? 1 : 0;
+      if (id === "crp") return value > 10 ? 2 : value > 1 ? 1 : 0;
+      if (id === "creatinine") return value > 1.5 ? 2 : value > 1.1 ? 1 : 0;
+      if (id === "bun") return value > 25 ? 2 : value > 20 ? 1 : 0;
+      return 0;
+    }
+
+    function markerModerateCutoff(id) {
+      return ({ lactate: 2, crp: 1, creatinine: 1.1, bun: 20, ntprobnp: 125, ckmb: 5, myoglobin: 85, homocysteine: 15, cea: 5, d_dimer: 0.5 }[id] ?? 0);
+    }
+
+    function markerHighCutoff(id) {
+      return ({ lactate: 4, crp: 10, creatinine: 1.5, bun: 25, ntprobnp: 900, ckmb: 20, myoglobin: 200, homocysteine: 30, cea: 10, d_dimer: 2.0 }[id] ?? Number.POSITIVE_INFINITY);
+    }
+
+    function valueFor(id) {
+      if (inputValues[id] === null || inputValues[id] === undefined || inputValues[id] === "") return null;
+      const value = Number(inputValues[id]);
+      return Number.isFinite(value) ? value : null;
+    }
+
+    function markerDisplayName(id) {
+      if (id === "lactate_albumin") return "lactate+albumin";
+      if (id === "troponin") return "troponin";
+      if (id === "sCAR") return "sCAR";
+      if (id === "CAR") return "CAR";
+      if (id === "GPS") return "GPS";
+      if (id === "mGPS") return "mGPS";
+      if (id === "NLR") return "NLR";
+      if (id === "SII") return "SII";
+      if (id === "BAR") return "BAR";
+      if (id === "AG") return "AG";
+      if (id === "PF_ratio") return "PF ratio";
+      if (id === "SOFA") return "SOFA";
+      return itemName(markerById(id) || { id });
+    }
+
+    function formatMarkerValue(value) {
+      if (!Number.isFinite(value)) return "--";
+      if (Math.abs(value) >= 100) return value.toFixed(0);
+      if (Math.abs(value) >= 10) return value.toFixed(1);
+      return value.toFixed(2);
+    }
+
+    function chips(items, emptyText, className = "") {
+      const values = items.length ? items : [emptyText];
+      return values.map((item) => `<span class="chip ${escapeAttr(className)}">${escapeHtml(item)}</span>`).join("");
     }
 
     function renderCardiacTimeline() {
@@ -901,6 +1536,7 @@
       $("strokeAnnotationSection").hidden = !show;
       if (!show) return;
       $("strokeAnnotation").innerHTML = `
+        ${renderScarPrimaryMarker("stroke")}
         <div class="row">
           <div class="label">
             <div class="name">IL-6↑: NIHSS重症度・予後不良と相関（心原性塞栓で特に有意）</div>
@@ -932,6 +1568,7 @@
       $("fractureAnnotationSection").hidden = !show;
       if (!show) return;
       $("fractureAnnotation").innerHTML = `
+        ${renderScarPrimaryMarker("fracture")}
         <div class="row">
           <div class="label">
             <div class="name">骨代謝マーカー（Osteocalcin/NTx/CTx/RANKL）: MIMIC-IV未収録・測定推奨</div>
@@ -940,6 +1577,45 @@
           </div>
         </div>
       `;
+    }
+
+    function renderScarPrimaryMarker(disease) {
+      const scar = derivedValues().sCAR;
+      const auc = disease === "fracture" ? "0.8563" : "0.708";
+      const epvNote = disease === "fracture" ? " / EPV制約により単変量表示を優先" : "";
+      if (scar === null || scar === undefined) {
+        return `
+          <div class="row">
+            <div class="label">
+              <div class="name">primary marker: sCAR</div>
+              <div class="meta">sCAR unavailable: consider albumin and creatinine input</div>
+            </div>
+          </div>
+        `;
+      }
+      const percent = scarRiskPercent(scar);
+      return `
+        <div class="row">
+          <div class="label">
+            <div class="name">primary marker: ${markerInfoLink(markerById("scar"))}</div>
+            <div class="meta">sCAR = creatinine / albumin = ${scar.toFixed(3)} / 単変量AUC=${auc}${epvNote}</div>
+          </div>
+          <div class="marker-risk" aria-label="sCAR risk bar">
+            <div class="marker-risk-top">
+              <span>sCAR risk</span>
+              <span>${percent}%</span>
+            </div>
+            <div class="marker-risk-track">
+              <div class="marker-risk-fill" style="width: ${percent}%"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function scarRiskPercent(value) {
+      if (!Number.isFinite(value) || value < 0) return 0;
+      return Math.max(0, Math.min(100, Math.round((value / 1.0) * 100)));
     }
 
     function renderInfectionAnnotation() {
@@ -993,7 +1669,7 @@
             <div class="meta">${escapeHtml(note)}</div>
             ${coefNsNote(item)}
           </div>
-          <span class="badge">${Number(value).toFixed(name === "GPS" || name === "SOFA" ? 0 : 1)}</span>
+          <span class="badge">${Number(value).toFixed(name === "GPS" || name === "SOFA" ? 0 : name === "sCAR" ? 3 : 1)}</span>
         </div>
       `;
     }
@@ -1009,7 +1685,9 @@
         `疾患: ${disease}`,
         ...(currentDisease() === "cancer" ? [`がん種: ${subtype}`] : []),
         `Risk score: ${score}`,
-        ...Object.entries(d).map(([k, v]) => `${k}: ${Number(v).toFixed(k === "GPS" || k === "SOFA" ? 0 : 1)}`)
+        ...Object.entries(d)
+          .filter(([, v]) => v !== null && v !== undefined)
+          .map(([k, v]) => `${k}: ${Number(v).toFixed(k === "GPS" || k === "SOFA" ? 0 : 1)}`)
       ].join("\n");
     }
 
@@ -1148,7 +1826,7 @@
       const sw = `
 	        const CACHE = "cdss-html-v3";
 	        self.addEventListener("install", (event) => {
-	          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "config/coef_map.json", "cdss/score_norm.json", "${CASES_PUBLIC_URL}"]).catch(() => undefined)));
+	          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "lab_master_v1.json", "config/coef_map.json", "04_CDSS/config/marker_strength.json", "cdss/score_norm.json", "${CASES_PUBLIC_URL}"]).catch(() => undefined)));
           self.skipWaiting();
         });
         self.addEventListener("activate", (event) => {
@@ -1175,12 +1853,18 @@
           inputValues.vasopressor_support = event.target.checked ? (inputValues.vasopressor_support === "none" ? "low" : inputValues.vasopressor_support || "low") : "none";
           renderInput();
           renderDerivedList();
+          renderDiseasePanelCards();
+          updateRadar(currentDisease());
           return;
         }
         inputValues[inputId] = event.target.value;
         updateInputState(event.target);
         renderPneumoniaCrpChange();
         renderDerivedList();
+        renderDiseasePanelCards();
+        renderStrokeAnnotation();
+        renderFractureAnnotation();
+        updateRadar(currentDisease());
       }
       const lowId = event.target.dataset.settingLow;
       if (lowId) settings.perItem[lowId].ref_low = event.target.value;
@@ -1225,6 +1909,7 @@
       if (inputId === "vasopressor_support") {
         inputValues.vasopressor_support = event.target.value;
         renderDerivedList();
+        updateRadar(currentDisease());
       }
       const enableId = event.target.dataset.settingEnable;
       if (enableId) settings.perItem[enableId].enabled = event.target.checked;
@@ -1254,7 +1939,12 @@
 	    document.addEventListener("DOMContentLoaded", async () => {
 	      try {
 	        await loadCoefMap();
-	        loadMaster();
+	      } catch (e) {
+	        console.warn("coef_map.json load failed; scoring is disabled:", e);
+	      }
+	      try {
+	        await loadMarkerStrengthConfig();
+	        await loadMaster();
 	      } catch (e) {
 	        showConfigError(e.message);
 	      }
@@ -1262,5 +1952,309 @@
   </script>
 <script src="./config_loader.js"></script>
 <script>document.addEventListener("DOMContentLoaded",()=>CDSS.loadCDSSConfig("./04_CDSS/config").then(()=>console.log("CDSS config ready",CDSS.CONFIG)));</script>
+<script>
+  (() => {
+    window.CDSS = window.CDSS || {};
+    if (window.CDSS.radarPrototype) return;
+
+    const chartState = new WeakMap();
+    let chartLoadPromise = null;
+    const chartSrc = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js";
+
+    const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+    const finite = (value) => {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : null;
+    };
+
+    function normalizeMetric(key, value) {
+      const n = finite(value);
+      if (n === null) return null;
+      const specs = {
+        lactate: { label: "Lactate", value: clamp((n / 8) * 100, 0, 100) },
+        albumin: { label: "Albumin low", value: clamp(((4.5 - n) / 2) * 100, 0, 100) },
+        nlr: { label: "NLR", value: clamp((n / 10) * 100, 0, 100) },
+        sii: { label: "SII", value: clamp((n / 2000) * 100, 0, 100) },
+        scar: { label: "sCAR", value: clamp((n / 5) * 100, 0, 100) },
+        gps: { label: "GPS", value: clamp((n / 2) * 100, 0, 100) }
+      };
+      return specs[key] || null;
+    }
+
+    function buildMetrics(values) {
+      return ["lactate", "albumin", "nlr", "sii", "scar", "gps"]
+        .map((key) => normalizeMetric(key, values?.[key]))
+        .filter(Boolean);
+    }
+
+    function circularityIndex(values) {
+      if (values.length < 3) return null;
+      const angle = (Math.PI * 2) / values.length;
+      let area = 0;
+      let perimeter = 0;
+      const points = values.map((value, index) => {
+        const theta = angle * index;
+        return [value * Math.cos(theta), value * Math.sin(theta)];
+      });
+      for (let i = 0; i < values.length; i += 1) {
+        const next = (i + 1) % values.length;
+        area += values[i] * values[next] * Math.sin(angle) / 2;
+        perimeter += Math.hypot(points[i][0] - points[next][0], points[i][1] - points[next][1]);
+      }
+      return perimeter > 0 ? clamp(4 * Math.PI * area / (perimeter * perimeter), 0, 1) : null;
+    }
+
+    function radarAreaIndex(values) {
+      if (values.length < 3) return null;
+      const angle = (Math.PI * 2) / values.length;
+      let area = 0;
+      for (let i = 0; i < values.length; i += 1) {
+        const next = (i + 1) % values.length;
+        area += values[i] * values[next] * Math.sin(angle) / 2;
+      }
+      const maxArea = values.length * 100 * 100 * Math.sin(angle) / 2;
+      return maxArea > 0 ? clamp(area / maxArea, 0, 1) : null;
+    }
+
+    function computeIndices(values) {
+      const metrics = buildMetrics(values);
+      if (metrics.length < 3) return null;
+      const radarValues = metrics.map((item) => item.value);
+      return {
+        available: metrics.length,
+        labels: metrics.map((item) => item.label),
+        values: radarValues,
+        circularity: circularityIndex(radarValues),
+        area: radarAreaIndex(radarValues)
+      };
+    }
+
+    function chartScriptPresent() {
+      return document.querySelector('script[src*="chart.js"], script[src*="Chart.js"], script[src*="chartjs"]');
+    }
+
+    function ensureChartJs() {
+      if (window.Chart) return Promise.resolve(window.Chart);
+      if (chartLoadPromise) return chartLoadPromise;
+      const existing = chartScriptPresent();
+      if (existing) {
+        chartLoadPromise = new Promise((resolve, reject) => {
+          if (window.Chart) resolve(window.Chart);
+          existing.addEventListener("load", () => window.Chart ? resolve(window.Chart) : reject(new Error("Chart.js unavailable")), { once: true });
+          existing.addEventListener("error", reject, { once: true });
+          setTimeout(() => window.Chart ? resolve(window.Chart) : reject(new Error("Chart.js unavailable")), 2500);
+        });
+        return chartLoadPromise;
+      }
+      chartLoadPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = chartSrc;
+        script.async = true;
+        script.dataset.radarDemoChart = "true";
+        script.onload = () => window.Chart ? resolve(window.Chart) : reject(new Error("Chart.js unavailable"));
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+      return chartLoadPromise;
+    }
+
+    function destroyChart(canvas) {
+      const state = chartState.get(canvas);
+      if (state?.chart) state.chart.destroy();
+      chartState.delete(canvas);
+    }
+
+    function drawFallback(canvas, labels, values) {
+      destroyChart(canvas);
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      const cx = width / 2;
+      const cy = height / 2;
+      const radius = Math.min(width, height) * 0.32;
+      ctx.clearRect(0, 0, width, height);
+      ctx.strokeStyle = "rgba(147, 164, 183, 0.38)";
+      ctx.fillStyle = "rgba(147, 164, 183, 0.75)";
+      ctx.font = "12px system-ui, sans-serif";
+      [0.25, 0.5, 0.75, 1].forEach((ring) => {
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius * ring, 0, Math.PI * 2);
+        ctx.stroke();
+      });
+      const points = values.map((value, index) => {
+        const angle = -Math.PI / 2 + (Math.PI * 2 * index) / values.length;
+        const r = radius * (value / 100);
+        const lx = cx + Math.cos(angle) * (radius + 28);
+        const ly = cy + Math.sin(angle) * (radius + 28);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius);
+        ctx.stroke();
+        ctx.fillText(labels[index], lx - 18, ly);
+        return [cx + Math.cos(angle) * r, cy + Math.sin(angle) * r];
+      });
+      ctx.beginPath();
+      points.forEach(([x, y], index) => index ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+      ctx.closePath();
+      ctx.fillStyle = "rgba(74, 163, 255, 0.22)";
+      ctx.strokeStyle = "rgba(74, 163, 255, 0.9)";
+      ctx.lineWidth = 2;
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    function drawChart(canvas, labels, values) {
+      destroyChart(canvas);
+      const chart = new window.Chart(canvas, {
+        type: "radar",
+        data: {
+          labels,
+          datasets: [{
+            label: "Prototype intensity",
+            data: values,
+            fill: true,
+            backgroundColor: "rgba(74, 163, 255, 0.22)",
+            borderColor: "rgba(74, 163, 255, 0.95)",
+            pointBackgroundColor: "rgba(47, 209, 124, 0.95)",
+            pointBorderColor: "#e5eef8",
+            pointRadius: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${Number(ctx.raw).toFixed(1)}` } }
+          },
+          scales: {
+            r: {
+              beginAtZero: true,
+              min: 0,
+              max: 100,
+              ticks: { display: false, stepSize: 25 },
+              grid: { color: "rgba(147, 164, 183, 0.24)" },
+              angleLines: { color: "rgba(147, 164, 183, 0.28)" },
+              pointLabels: { color: "#c8d7e8", font: { size: 11, weight: "700" } }
+            }
+          }
+        }
+      });
+      chartState.set(canvas, { chart });
+    }
+
+    window.CDSS.radarPrototype = {
+      compute(values) {
+        return computeIndices(values);
+      },
+      render({ canvas, circularityEl, areaEl, noteEl, section, disease, score, values }) {
+        if (!canvas || !section) return;
+        const metrics = computeIndices(values);
+        if (!metrics) {
+          destroyChart(canvas);
+          section.hidden = true;
+          if (circularityEl) circularityEl.textContent = "--";
+          if (areaEl) areaEl.textContent = "--";
+          return;
+        }
+        section.hidden = false;
+        const labels = metrics.labels;
+        const radarValues = metrics.values;
+        if (circularityEl) circularityEl.textContent = metrics.circularity === null ? "--" : `CI ${metrics.circularity.toFixed(3)}`;
+        if (areaEl) areaEl.textContent = metrics.area === null ? "--" : `Area ${metrics.area.toFixed(3)}`;
+        if (noteEl) {
+          const riskText = Number.isFinite(Number(score)) ? `Risk score ${score}. ` : "";
+          noteEl.textContent = `${riskText}${disease || "selected disease"} radar prototype. CI uses 4πA/P²; Area is normalized polygon fill. NLR/SII 可視化参考値, not Cox predictors.`;
+        }
+        drawFallback(canvas, labels, radarValues);
+        ensureChartJs()
+          .then(() => drawChart(canvas, labels, radarValues))
+          .catch(() => {});
+      }
+    };
+
+    window.CDSS.renderRadarPanel = function renderRadarPanel(containerId, disease, rawValues) {
+      const container = document.getElementById(containerId);
+      if (!container) return null;
+      if (!container.dataset.radarReady) {
+        container.innerHTML = `
+          <div class="section-title">── 検査値プロファイル可視化（補助）──</div>
+          <div class="panel radar-demo-panel">
+            <div class="radar-demo-summary">
+              <div>
+                <div class="name"></div>
+                <div class="radar-demo-note"></div>
+              </div>
+              <div class="radar-demo-metrics">
+                <div class="radar-demo-metric">
+                  <div class="radar-demo-metric-label">均衡指数 (C)</div>
+                  <div class="radar-demo-score" data-radar-circularity>--</div>
+                  <div class="radar-demo-note" data-radar-circularity-label></div>
+                  <div class="radar-demo-note">※ 均衡指数は検査値プロファイルの形状均衡性を示す補助指標です。<br>予後確率・Cox予測スコアとは独立しており、臨床判断の主指標ではありません。</div>
+                </div>
+                <div class="radar-demo-metric">
+                  <div class="radar-demo-metric-label">Radar Area Index / 異常面積指数</div>
+                  <div class="radar-demo-score" data-radar-area>--</div>
+                </div>
+              </div>
+            </div>
+            <div class="radar-demo-canvas-wrap">
+              <canvas width="320" height="320" aria-label="Disease radar visualization prototype"></canvas>
+            </div>
+            <div class="radar-demo-note" data-radar-nlr-sii-note hidden></div>
+          </div>
+        `;
+        container.dataset.radarReady = "true";
+      }
+      const title = container.querySelector(".name");
+      if (title) title.textContent = `${disease || "selected"} biomarker radar`;
+      const metrics = window.CDSS.radarPrototype.compute(rawValues);
+      window.CDSS.radarPrototype.render({
+        canvas: container.querySelector("canvas"),
+        circularityEl: container.querySelector("[data-radar-circularity]"),
+        areaEl: container.querySelector("[data-radar-area]"),
+        noteEl: container.querySelector(".radar-demo-note"),
+        section: container,
+        disease,
+        values: rawValues
+      });
+      const circularity = metrics?.circularity;
+      const badgeLabel = circularity === null || circularity === undefined
+        ? "算出不可"
+        : circularity >= 0.75
+          ? "均衡"
+          : circularity >= 0.5
+            ? "中等度"
+            : "不均衡";
+      const circularityBadge = container.querySelector("[data-radar-circularity]");
+      if (circularityBadge) {
+        circularityBadge.innerHTML = `
+          <span>${circularity === null || circularity === undefined ? "--" : circularity.toFixed(2)}</span>
+          <span class="badge">${badgeLabel}</span>
+        `;
+      }
+      const circularityLabel = container.querySelector("[data-radar-circularity-label]");
+      if (circularityLabel) circularityLabel.textContent = badgeLabel;
+      const radarMarkers = [
+        ...(window.RADAR_MARKERS?.[disease] || []),
+        ...(window.CDSS.RADAR_MARKERS?.[disease] || [])
+      ];
+      const hasNlrSiiMarker = radarMarkers.some((marker) => {
+        const label = typeof marker === "string" ? marker : marker?.label || marker?.name || marker?.id;
+        return /^(NLR|SII)$/i.test(String(label || ""));
+      });
+      const showVisualizationOnlyNote = ["stroke", "fracture", "infection"].includes(disease) || hasNlrSiiMarker;
+      const nlrSiiNote = container.querySelector("[data-radar-nlr-sii-note]");
+      if (nlrSiiNote) {
+        nlrSiiNote.hidden = !showVisualizationOnlyNote;
+        nlrSiiNote.textContent = showVisualizationOnlyNote
+          ? "※ NLR・SII は可視化参考値です。Cox予測モデルの構成因子ではありません。"
+          : "";
+      }
+      return metrics;
+    };
+  })();
+</script>
 </body>
 </html>

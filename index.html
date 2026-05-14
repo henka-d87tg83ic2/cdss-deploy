@@ -235,7 +235,7 @@
             <div class="radar-demo-summary">
               <div>
                 <div class="name">Biomarker shape prototype</div>
-                <div class="radar-demo-note" id="radarDemoNote">NLR/SII are visualization candidates only and are not used as Cox predictors.</div>
+                <div class="radar-demo-note" id="radarDemoNote">検査値プロファイルの形状を示す補助可視化です。均衡指数は予後確率・Cox予測スコアではありません。NLR/SII は可視化参考値であり、Cox予測モデルの構成因子ではありません。</div>
               </div>
               <div class="radar-demo-metrics">
                 <div class="radar-demo-metric">
@@ -1138,6 +1138,9 @@
       }
       target.classList.add("active");
       target.innerHTML = `
+        <div class="radar-demo-note" style="font-weight:800;color:var(--muted);margin-bottom:6px;">
+          ── 検査値プロファイル可視化（補助）──
+        </div>
         <div class="radar-demo-metrics">
           <div class="radar-demo-metric">
             <div class="radar-demo-metric-label">Circularity Index / 均衡指数</div>
@@ -1147,6 +1150,10 @@
             <div class="radar-demo-metric-label">Radar Area Index / 異常面積指数</div>
             <div class="radar-demo-score">${metrics.area === null ? "--" : `Area ${escapeHtml(metrics.area.toFixed(3))}`}</div>
           </div>
+        </div>
+        <div class="radar-demo-note" style="margin-top:6px;">
+          ※ 均衡指数は検査値プロファイルの形状均衡性を示す補助指標です。<br>
+          予後確率・Cox予測スコアとは独立しており、臨床判断の主指標ではありません。
         </div>
         <div class="radar-demo-note">${escapeHtml(diseaseName(disease))}: <span class="visual-reference">NLR/SII 可視化参考値</span></div>
       `;

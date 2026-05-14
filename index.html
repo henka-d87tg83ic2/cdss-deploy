@@ -63,7 +63,21 @@
     .risk-mid { color: var(--yellow); }
     .risk-high { color: var(--red); }
     .disease-panel-grid { display: grid; gap: 10px; }
+    .disease-summary-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .disease-summary-nav { min-width: 0; min-height: 104px; padding: 9px; border: 1px solid rgba(39, 50, 65, 0.9); border-radius: 8px; background: rgba(14, 22, 33, 0.72); color: var(--text); text-align: left; display: grid; gap: 5px; }
+    .disease-summary-nav.active { border-color: rgba(74, 163, 255, 0.68); background: rgba(74, 163, 255, 0.10); }
+    .disease-summary-nav:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+    .disease-summary-nav-name { font-size: 13px; font-weight: 900; }
+    .disease-summary-nav-risk { font-size: 15px; font-weight: 900; }
+    .disease-summary-nav-meta { color: var(--muted); font-size: 11px; font-weight: 800; }
+    .disease-summary-nav-score { color: #c8d7e8; font-size: 12px; font-weight: 900; }
+    .disease-detail-list { display: grid; gap: 10px; }
+    .explain-box { display: grid; gap: 6px; padding: 10px; border: 1px solid rgba(147, 164, 183, 0.24); border-radius: 7px; background: rgba(147, 164, 183, 0.07); color: #c8d7e8; font-size: 12px; line-height: 1.45; }
+    .explain-box.patient { border-color: rgba(47, 209, 124, 0.26); background: rgba(47, 209, 124, 0.08); }
+    .explain-title { color: #bfd1e5; font-size: 12px; font-weight: 900; }
     .disease-card { display: grid; gap: 12px; padding: 12px; background: rgba(17, 24, 39, 0.96); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
+    .disease-card[hidden] { display: none; }
+    .disease-card:focus { outline: 2px solid var(--blue); outline-offset: 2px; }
     .disease-card-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .disease-card-title { min-width: 0; font-size: 16px; font-weight: 900; text-transform: capitalize; }
     .disease-card-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
@@ -205,12 +219,12 @@
 
       <section class="page" id="page-result">
         <div class="section">
-          <div class="section-title">疾患別 biomarker panel</div>
+          <div class="section-title">疾患別バイオマーカー評価</div>
           <div class="disease-panel-grid" id="diseasePanelCards"></div>
-          <div class="clinical-disclaimer">Recommendations are input-support prompts only. They do not establish diagnosis, mandate testing, direct treatment, or override clinical judgment.</div>
+          <div class="clinical-disclaimer">推奨表示は入力補助のための情報です。診断確定、検査実施、治療方針、臨床判断の代替を目的とするものではありません。</div>
         </div>
         <div class="panel score">
-          <div class="meta">Risk score</div>
+          <div class="meta">リスクスコア</div>
           <div class="score-value" id="riskScore">--</div>
           <div class="score-probability" id="riskProbability"></div>
           <div class="badge" id="riskBand">未判定</div>
@@ -230,7 +244,7 @@
           <div class="panel" id="derivedList"><div class="empty">算出可能な指標がありません</div></div>
         </div>
         <div class="section" id="radar-demo" hidden>
-          <div class="section-title">Radar / Circularity Index demo</div>
+          <div class="section-title">検査値プロファイル可視化（補助）</div>
           <div class="panel radar-demo-panel">
             <div class="radar-demo-summary">
               <div>
@@ -239,11 +253,11 @@
               </div>
               <div class="radar-demo-metrics">
                 <div class="radar-demo-metric">
-                  <div class="radar-demo-metric-label">Circularity Index / 均衡指数</div>
+                  <div class="radar-demo-metric-label">均衡指数（Circularity）</div>
                   <div class="radar-demo-score" id="radarDemoCircularity">--</div>
                 </div>
                 <div class="radar-demo-metric">
-                  <div class="radar-demo-metric-label">Radar Area Index / 異常面積指数</div>
+                  <div class="radar-demo-metric-label">異常面積指数（Radar Area）</div>
                   <div class="radar-demo-score" id="radarDemoArea">--</div>
                 </div>
               </div>
@@ -352,13 +366,78 @@
     const INFECTION_REQUIRED_ITEMS = ["pao2", "fio2", "platelet", "bilirubin_total", "creatinine"];
     const REJECTED_ADOPTION_DECISIONS = ["reject_due_to_missingness", "reject_due_to_low_events", "reject_due_to_auc", "reject_due_to_non_significance", "rejected", "routine_rejected"];
     const CONFIDENCE_COPY = {
-      High: "Primary marker available",
-      Medium: "Secondary marker only",
-      Low: "Fallback marker only",
-      Insufficient: "No usable marker"
+      High: "主要マーカーが入力されています",
+      Medium: "補助マーカーまで入力されています",
+      Low: "代替マーカーのみでの評価です",
+      Insufficient: "評価に必要なマーカーが不足しています"
     };
-    const CONFIDENCE_EXPLANATION = "Confidence reflects available biomarker coverage, not mortality probability. Risk score can be high even when confidence is low.";
-    const RECOMMENDATION_EXPLANATION = "Recommendation is for input completeness, not a treatment order.";
+    const CONFIDENCE_EXPLANATION = "信頼度は入力済みバイオマーカーの充足度を示し、死亡確率そのものではありません。リスクが高くても、入力不足がある場合は信頼度が低く表示されます。";
+    const RECOMMENDATION_EXPLANATION = "追加推奨は入力を補うための提案であり、検査実施や治療を指示するものではありません。";
+    const RISK_LEVEL_LABELS = {
+      High: "高リスク",
+      Moderate: "中等度リスク",
+      Low: "低リスク",
+      Unknown: "未判定"
+    };
+    const CONFIDENCE_LABELS = {
+      High: "高",
+      Medium: "中",
+      Low: "低",
+      Insufficient: "不足"
+    };
+    const DISEASE_EXPLANATIONS = {
+      cardiac: {
+        meaning: "心筋傷害、心不全、循環不全を反映する検査値から、急性期の重症化リスクを確認します。",
+        patient: "心臓への負担や全身状態を検査値から見て、注意深い経過観察が必要かを判断する補助情報です。"
+      },
+      stroke: {
+        meaning: "脳卒中急性期の炎症、栄養状態、腎機能関連指標を組み合わせ、予後悪化の兆候を確認します。",
+        patient: "脳卒中後の体の負担や回復を妨げる要素がないかを、血液検査から確認するための表示です。"
+      },
+      cancer: {
+        meaning: "悪性腫瘍患者の炎症、低栄養、全身予備能を評価し、入院中死亡リスクの背景を説明します。",
+        patient: "がんそのものの診断ではなく、体力や炎症の状態から入院中の注意度を考える補助情報です。"
+      },
+      pneumonia: {
+        meaning: "肺炎に伴う炎症、低酸素、循環不全の可能性を検査値から整理し、重症化リスクを確認します。",
+        patient: "肺炎で体にどの程度負担がかかっているかを、血液検査と酸素化の情報から見る補助表示です。"
+      },
+      fracture: {
+        meaning: "骨折、特に周術期の炎症、栄養、腎機能、凝固関連の変化から合併症リスクを確認します。",
+        patient: "骨折や手術の前後で、体力・腎機能・血栓の心配がどの程度あるかを見るための補助情報です。"
+      },
+      infection: {
+        meaning: "感染症や敗血症で重要な炎症、循環不全、臓器障害の兆候を整理し、悪化リスクを確認します。",
+        patient: "感染による体への負担が強くなっていないかを、検査値から早めに気づくための補助表示です。"
+      }
+    };
+    const DERIVED_EXPLANATIONS = {
+      NLR: "NLRは好中球/リンパ球比です。炎症の強さと免疫反応のバランスを見る表示専用の補助指標で、Cox予測モデルの構成因子ではありません。",
+      SII: "SIIは血小板×好中球/リンパ球で計算する全身免疫炎症指数です。可視化参考値であり、Cox予測モデルの構成因子ではありません。",
+      sCAR: "sCARはcreatinine/albuminで、腎機能低下と低栄養・炎症を合わせて見る派生指標です。疾患カードでは補助説明として扱います。",
+      "Radar Area": "異常面積指数はレーダーチャート全体の広がりを示す可視化指標です。予後確率やCoxスコアとは独立しています。",
+      Circularity: "均衡指数は検査値プロファイルの形状の偏りを示す補助指標です。臨床判断の主指標ではありません。"
+    };
+    const MODEL_INPUT_LABELS = {
+      lactate: "乳酸",
+      albumin: "アルブミン",
+      crp: "CRP",
+      creatinine: "クレアチニン",
+      troponin_i: "Troponin I",
+      charlson_comorbidity_index: "Charlson併存疾患指数"
+    };
+    const DISPLAY_ONLY_LABELS = {
+      NLR: "NLR",
+      SII: "SII",
+      sCAR: "sCAR",
+      CAR: "CAR",
+      BAR: "BAR",
+      GPS: "GPS",
+      mGPS: "mGPS",
+      PF_ratio: "PF ratio",
+      SOFA: "SOFA",
+      radar: "異常面積指数 / 均衡指数"
+    };
     const FALLBACK_MARKER_PANEL_CONFIG = {
       cardiac: { primary: ["troponin"], secondary: ["ntprobnp", "ckmb", "myoglobin"], fallback: ["lactate", "albumin", "NLR"] },
       stroke: { primary: ["sCAR"], secondary: ["bun", "NLR", "homocysteine"], fallback: ["lactate", "albumin", "crp"] },
@@ -471,6 +550,7 @@
 	    let caseBannerTimer = null;
 	    let MARKER_PANEL_CONFIG = FALLBACK_MARKER_PANEL_CONFIG;
 	    let COEF_CONFIG = null;
+    let expandedDiseasePanel = null;
 
     const $ = (id) => document.getElementById(id);
     const itemId = (item) => item.id || item.key || item.name || item.name_jp;
@@ -1144,19 +1224,20 @@
         </div>
         <div class="radar-demo-metrics">
           <div class="radar-demo-metric">
-            <div class="radar-demo-metric-label">Circularity Index / 均衡指数</div>
-            <div class="radar-demo-score">${metrics.circularity === null ? "--" : `CI ${escapeHtml(metrics.circularity.toFixed(3))}`}</div>
+            <div class="radar-demo-metric-label">均衡指数（Circularity）</div>
+            <div class="radar-demo-score">${metrics.circularity === null ? "--" : `C ${escapeHtml(metrics.circularity.toFixed(3))}`}</div>
           </div>
           <div class="radar-demo-metric">
-            <div class="radar-demo-metric-label">Radar Area Index / 異常面積指数</div>
-            <div class="radar-demo-score">${metrics.area === null ? "--" : `Area ${escapeHtml(metrics.area.toFixed(3))}`}</div>
+            <div class="radar-demo-metric-label">異常面積指数（Radar Area）</div>
+            <div class="radar-demo-score">${metrics.area === null ? "--" : `面積 ${escapeHtml(metrics.area.toFixed(3))}`}</div>
           </div>
         </div>
         <div class="radar-demo-note" style="margin-top:6px;">
           ※ 均衡指数は検査値プロファイルの形状均衡性を示す補助指標です。<br>
           予後確率・Cox予測スコアとは独立しており、臨床判断の主指標ではありません。
+          <br>※ 異常面積指数は検査値プロファイル全体の広がりを示す可視化指標です。
         </div>
-        <div class="radar-demo-note">${escapeHtml(diseaseName(disease))}: <span class="visual-reference">NLR/SII 可視化参考値</span></div>
+        <div class="radar-demo-note">${escapeHtml(diseaseName(disease))}: <span class="visual-reference">NLR/SII は可視化参考値（Coxモデル非使用）</span></div>
       `;
     }
 
@@ -1185,33 +1266,64 @@
     }
 
     function renderDiseasePanelCards() {
-      $("diseasePanelCards").innerHTML = DISEASES.map(([id, name]) => renderDiseasePanelCard(id, name)).join("");
+      $("diseasePanelCards").innerHTML = `
+        <div class="disease-summary-grid" aria-label="6疾患リスクレベル一覧">
+          ${DISEASES.map(([id, name]) => renderDiseaseSummaryNav(id, name)).join("")}
+        </div>
+        <div class="disease-detail-list">
+          ${DISEASES.map(([id, name]) => renderDiseasePanelCard(id, name)).join("")}
+        </div>
+      `;
+    }
+
+    function renderDiseaseSummaryNav(id, name) {
+      const assessment = assessDiseasePanel(id);
+      const expanded = expandedDiseasePanel === id;
+      return `
+        <button class="disease-summary-nav ${expanded ? "active" : ""}" type="button" data-disease-toggle="${escapeAttr(id)}" aria-expanded="${expanded ? "true" : "false"}" aria-controls="disease-detail-${escapeAttr(id)}">
+          <span class="disease-summary-nav-name">${escapeHtml(name)}</span>
+          <span class="disease-summary-nav-risk risk-${riskClassName(assessment.level)}">リスク: ${escapeHtml(riskLevelLabel(assessment.level))}</span>
+          <span class="disease-summary-nav-meta">信頼度: ${escapeHtml(confidenceLabel(assessment.confidence))}</span>
+          <span class="disease-summary-nav-score">補助スコア: ${assessment.percent}%</span>
+          <span class="disease-summary-nav-meta">入力済み: ${assessment.availableCount}/${assessment.totalCount}</span>
+        </button>
+      `;
     }
 
     function renderDiseasePanelCard(id, name) {
       const assessment = assessDiseasePanel(id);
       const confidenceClass = assessment.confidence.toLowerCase();
       const recommendation = assessment.recommendation;
+      const expanded = expandedDiseasePanel === id;
+      const explanation = DISEASE_EXPLANATIONS[id] || {};
       return `
-        <article class="disease-card">
+        <article class="disease-card" id="disease-detail-${escapeAttr(id)}" tabindex="-1"${expanded ? "" : " hidden"}>
           <div class="disease-card-head">
             <div class="disease-card-title">${escapeHtml(name)}</div>
-            <span class="badge">Markers: ${assessment.availableCount}/${assessment.totalCount}</span>
+            <span class="badge">入力済み: ${assessment.availableCount}/${assessment.totalCount}</span>
+          </div>
+          <div class="explain-box">
+            <div class="explain-title">臨床的意味</div>
+            <div>${escapeHtml(explanation.meaning || "疾患別の検査値充足度とリスクシグナルを確認します。")}</div>
+          </div>
+          <div class="explain-box patient">
+            <div class="explain-title">患者・家族への説明例</div>
+            <div>${escapeHtml(explanation.patient || "この表示は診断名を決めるものではなく、検査値から注意深く見るべき点を整理する補助情報です。")}</div>
           </div>
           <div class="disease-card-summary">
             <div class="disease-summary-box risk">
-              <div class="disease-summary-label">Risk Level</div>
-              <div class="disease-summary-value risk-${riskClassName(assessment.level)}">${escapeHtml(assessment.level)}</div>
+              <div class="disease-summary-label">リスクレベル</div>
+              <div class="disease-summary-value risk-${riskClassName(assessment.level)}">${escapeHtml(riskLevelLabel(assessment.level))}</div>
             </div>
             <div class="disease-summary-box confidence">
-              <div class="disease-summary-label">Confidence</div>
-              <div class="disease-summary-value confidence-${confidenceClass}">${escapeHtml(assessment.confidence)}</div>
+              <div class="disease-summary-label">信頼度</div>
+              <div class="disease-summary-value confidence-${confidenceClass}">${escapeHtml(confidenceLabel(assessment.confidence))}</div>
               <div class="confidence-detail">${escapeHtml(assessment.confidenceReason)}</div>
             </div>
           </div>
           <div class="risk-bar" aria-label="${escapeAttr(name)} risk level">
             <div class="risk-bar-top">
-              <span>Risk estimate</span>
+              <span>補助スコア</span>
               <span>${assessment.percent}%</span>
             </div>
             <div class="risk-bar-track">
@@ -1220,36 +1332,41 @@
           </div>
           <div class="disease-card-meta">
             <div class="disease-metric">
-              <div class="disease-metric-label">Available Markers</div>
+              <div class="disease-metric-label">入力済みマーカー</div>
               <div class="disease-metric-value">${assessment.availableCount}/${assessment.totalCount}</div>
             </div>
             <div class="disease-metric">
-              <div class="disease-metric-label">Missing Markers</div>
+              <div class="disease-metric-label">不足マーカー</div>
               <div class="disease-metric-value">${assessment.missing.length}</div>
             </div>
             <div class="disease-metric primary-marker">
-              <div class="disease-metric-label">Primary Marker</div>
+              <div class="disease-metric-label">主要マーカー</div>
               <div class="disease-metric-value">${escapeHtml(assessment.primaryStatus)}</div>
             </div>
           </div>
           <div class="disease-card-lists">
             <div class="confidence-note">${escapeHtml(CONFIDENCE_EXPLANATION)}</div>
-            <div>
-              <div class="disease-list-title">Risk Drivers</div>
-              <div class="chip-list">${chips(assessment.drivers, "No active drivers")}</div>
+            <div class="explain-box">
+              <div class="explain-title">Coxモデル入力と表示専用指標の区別</div>
+              <div>${coxModelExplanation(id)}</div>
+              <div>${displayOnlyExplanation(id)}</div>
             </div>
             <div>
-              <div class="disease-list-title">Missing Recommended Markers</div>
-              <div class="chip-list">${chips(assessment.missing, "None", "missing")}</div>
+              <div class="disease-list-title">リスクに寄与する入力</div>
+              <div class="chip-list">${chips(assessment.drivers, "該当する入力はありません")}</div>
             </div>
             <div>
-              <div class="disease-list-title">Excluded From Routine Confidence</div>
-              <div class="chip-list">${chips(assessment.excluded, "None", "excluded")}</div>
+              <div class="disease-list-title">不足している推奨マーカー</div>
+              <div class="chip-list">${chips(assessment.missing, "不足なし", "missing")}</div>
+            </div>
+            <div>
+              <div class="disease-list-title">通常の信頼度評価から除外した表示項目</div>
+              <div class="chip-list">${chips(assessment.excluded, "該当なし", "excluded")}</div>
             </div>
             <div class="recommendation-box">
-              <div class="disease-list-title">Recommended Next Input</div>
-              <div class="recommendation-message">To improve confidence, add:</div>
-              <div class="chip-list">${chips(recommendation.inputs, "No critical marker missing", recommendation.inputs.length ? "recommend" : "")}</div>
+              <div class="disease-list-title">次に追加すると説明力が上がる入力</div>
+              <div class="recommendation-message">信頼度を補う候補:</div>
+              <div class="chip-list">${chips(recommendation.inputs, "重要な不足マーカーはありません", recommendation.inputs.length ? "recommend" : "")}</div>
               <div class="recommendation-message">${escapeHtml(recommendation.message)}</div>
               <div class="recommendation-message">${escapeHtml(RECOMMENDATION_EXPLANATION)}</div>
             </div>
@@ -1263,6 +1380,27 @@
       if (level === "Moderate") return "mid";
       if (level === "Low") return "low";
       return "mid";
+    }
+
+    function riskLevelLabel(level) {
+      return RISK_LEVEL_LABELS[level] || level || "未判定";
+    }
+
+    function confidenceLabel(confidence) {
+      return CONFIDENCE_LABELS[confidence] || confidence || "不足";
+    }
+
+    function coxModelExplanation(disease) {
+      const labels = Object.values(MODEL_INPUT_LABELS);
+      return `Cox予測スコアに係数として反映される入力候補: ${escapeHtml(labels.join(" / "))}。`;
+    }
+
+    function displayOnlyExplanation(disease) {
+      const config = MARKER_PANEL_CONFIG[disease] || FALLBACK_MARKER_PANEL_CONFIG[disease] || {};
+      const tokens = [...allMarkerTokens(routinePanelConfig(config)), ...(config.exploratory_if_available || []), ...(config.rejected_markers || [])];
+      const labels = [...new Set(tokens.filter((token) => DISPLAY_ONLY_LABELS[token]).map((token) => DISPLAY_ONLY_LABELS[token]))];
+      if (!labels.includes(DISPLAY_ONLY_LABELS.radar)) labels.push(DISPLAY_ONLY_LABELS.radar);
+      return `表示専用・補助説明の指標: ${escapeHtml(labels.join(" / "))}。NLR/SIIは可視化参考値で、Cox予測モデルの構成因子ではありません。`;
     }
 
     function assessDiseasePanel(disease) {
@@ -1279,8 +1417,8 @@
       const fallbackAvailable = fallbackAssessments.filter((item) => item.available);
       const primaryLabel = routine.primary.map(markerDisplayName).join(" / ");
       const primaryStatus = primaryAvailable.length
-        ? `Available: ${primaryAvailable.map((item) => item.label).join(" / ")}`
-        : `Missing: ${primaryLabel || "None"}`;
+        ? `入力済み: ${primaryAvailable.map((item) => item.label).join(" / ")}`
+        : `未入力: ${primaryLabel || "該当なし"}`;
       const drivers = available.filter((item) => item.points > 0).map((item) => `${item.label}: ${item.display}`);
       const missing = tokens.filter((token) => !markerAssessment(token)?.available).map(markerDisplayName);
       const points = available.reduce((sum, item) => sum + item.points, 0);
@@ -1361,16 +1499,16 @@
       if (primary) return recommendationForToken(disease, primary, "primary");
       const secondary = firstUnavailableToken(routine.secondary || []);
       if (secondary) return recommendationForToken(disease, secondary, "secondary");
-      const fallback = firstUnavailableToken(routine.fallback || []);
-      if (fallback) return recommendationForToken(disease, fallback, "fallback");
-      const exploratory = firstUnavailableToken(exploratoryRecommendationTokens(config));
-      if (exploratory) return recommendationForToken(disease, exploratory, "exploratory");
-      const diseaseLabel = diseaseRecommendationName(disease);
-      return {
-        token: null,
-        inputs: [],
-        message: `${diseaseLabel}: No confidence marker input is currently missing.`
-      };
+	      const fallback = firstUnavailableToken(routine.fallback || []);
+	      if (fallback) return recommendationForToken(disease, fallback, "fallback");
+	      const exploratory = firstUnavailableToken(exploratoryRecommendationTokens(config));
+	      if (exploratory) return recommendationForToken(disease, exploratory, "exploratory");
+	      const diseaseLabel = diseaseRecommendationName(disease);
+	      return {
+	        token: null,
+	        inputs: [],
+	        message: `${diseaseLabel}: 信頼度評価に必要な主要入力の不足はありません。`
+	      };
     }
 
     function exploratoryRecommendationTokens(config) {
@@ -1392,15 +1530,15 @@
       const markerName = markerDisplayName(token);
       const diseaseLabel = diseaseRecommendationName(disease);
       const inputText = joinRecommendationList(inputLabels);
-      const layerText = ({
-        primary: "primary",
-        secondary: "secondary",
-        fallback: "fallback",
-        exploratory: "exploratory"
-      }[layer] || "panel");
-      const message = inputLabels.length
-        ? `${diseaseLabel}: ${inputText} may improve confidence for ${layerText} marker ${markerName}.`
-        : `${diseaseLabel}: ${markerName} is already complete for ${layerText} marker coverage.`;
+	      const layerText = ({
+	        primary: "主要",
+	        secondary: "補助",
+	        fallback: "代替",
+	        exploratory: "探索的"
+	      }[layer] || "評価");
+	      const message = inputLabels.length
+	        ? `${diseaseLabel}: ${layerText}マーカー ${markerName} の信頼度を上げるには ${inputText} の入力が有用です。`
+	        : `${diseaseLabel}: ${layerText}マーカー ${markerName} に必要な入力は揃っています。`;
       return { token, inputs: inputLabels, message };
     }
 
@@ -1417,22 +1555,15 @@
       return RECOMMENDATION_LABELS[id] || markerDisplayName(id);
     }
 
-    function diseaseRecommendationName(id) {
-      return ({
-        cardiac: "Cardiac",
-        stroke: "Stroke",
-        cancer: "Cancer",
-        pneumonia: "Pneumonia",
-        fracture: "Fracture",
-        infection: "Infection"
-      }[id] || id);
-    }
+	    function diseaseRecommendationName(id) {
+	      return diseaseName(id);
+	    }
 
-    function joinRecommendationList(items) {
-      if (items.length <= 1) return items[0] || "";
-      if (items.length === 2) return `${items[0]} and/or ${items[1]}`;
-      return `${items.slice(0, -1).join(", ")}, and/or ${items[items.length - 1]}`;
-    }
+	    function joinRecommendationList(items) {
+	      if (items.length <= 1) return items[0] || "";
+	      if (items.length === 2) return `${items[0]} または ${items[1]}`;
+	      return `${items.slice(0, -1).join("、")}、または ${items[items.length - 1]}`;
+	    }
 
     function markerAssessment(token) {
       const d = derivedValues();
@@ -1455,20 +1586,20 @@
     function pairAssessment(label, ids) {
       const values = ids.map((id) => [id, valueFor(id)]);
       const availableValues = values.filter(([, value]) => Number.isFinite(value));
-      if (availableValues.length !== ids.length) return { label, available: false, points: 0, display: "missing" };
+	      if (availableValues.length !== ids.length) return { label, available: false, points: 0, display: "未入力" };
       const points = availableValues.reduce((sum, [id, value]) => sum + markerPoints(id, value), 0);
       const display = availableValues.map(([id, value]) => `${markerDisplayName(id)} ${formatMarkerValue(value)}`).join(" / ");
       return { label, available: true, points, display };
     }
 
     function thresholdAssessment(label, value, moderateCutoff, highCutoff, unit) {
-      if (!Number.isFinite(value)) return { label, available: false, points: 0, display: "missing" };
+	      if (!Number.isFinite(value)) return { label, available: false, points: 0, display: "未入力" };
       const points = value >= highCutoff ? 2 : value >= moderateCutoff ? 1 : 0;
       return { label, available: true, points, display: `${formatMarkerValue(value)}${unit ? ` ${unit}` : ""}` };
     }
 
     function lowThresholdAssessment(label, value, moderateCutoff, highCutoff, unit) {
-      if (!Number.isFinite(value)) return { label, available: false, points: 0, display: "missing" };
+	      if (!Number.isFinite(value)) return { label, available: false, points: 0, display: "未入力" };
       const points = value < highCutoff ? 2 : value < moderateCutoff ? 1 : 0;
       return { label, available: true, points, display: `${formatMarkerValue(value)}${unit ? ` ${unit}` : ""}` };
     }
@@ -1591,28 +1722,28 @@
       const scar = derivedValues().sCAR;
       const auc = disease === "fracture" ? "0.8563" : "0.708";
       const epvNote = disease === "fracture" ? " / EPV制約により単変量表示を優先" : "";
-      if (scar === null || scar === undefined) {
-        return `
-          <div class="row">
-            <div class="label">
-              <div class="name">primary marker: sCAR</div>
-              <div class="meta">sCAR unavailable: consider albumin and creatinine input</div>
-            </div>
-          </div>
-        `;
-      }
+	      if (scar === null || scar === undefined) {
+	        return `
+	          <div class="row">
+	            <div class="label">
+	              <div class="name">主要マーカー: sCAR</div>
+	              <div class="meta">sCARは未算出です。アルブミンとクレアチニンの入力を確認してください。</div>
+	            </div>
+	          </div>
+	        `;
+	      }
       const percent = scarRiskPercent(scar);
       return `
-        <div class="row">
-          <div class="label">
-            <div class="name">primary marker: ${markerInfoLink(markerById("scar"))}</div>
-            <div class="meta">sCAR = creatinine / albumin = ${scar.toFixed(3)} / 単変量AUC=${auc}${epvNote}</div>
-          </div>
-          <div class="marker-risk" aria-label="sCAR risk bar">
-            <div class="marker-risk-top">
-              <span>sCAR risk</span>
-              <span>${percent}%</span>
-            </div>
+	        <div class="row">
+	          <div class="label">
+	            <div class="name">主要マーカー: ${markerInfoLink(markerById("scar"))}</div>
+	            <div class="meta">sCAR = creatinine / albumin = ${scar.toFixed(3)} / 単変量AUC=${auc}${epvNote}</div>
+	          </div>
+	          <div class="marker-risk" aria-label="sCARリスクバー">
+	            <div class="marker-risk-top">
+	              <span>sCAR補助リスク</span>
+	              <span>${percent}%</span>
+	            </div>
             <div class="marker-risk-track">
               <div class="marker-risk-fill" style="width: ${percent}%"></div>
             </div>
@@ -1670,11 +1801,13 @@
     }
 
     function derivedRow(name, value, note, item = null) {
+      const explanation = DERIVED_EXPLANATIONS[name] ? `<div class="meta">${escapeHtml(DERIVED_EXPLANATIONS[name])}</div>` : "";
       return `
         <div class="row">
           <div class="label">
             <div class="name derived">${item ? markerInfoLink(item, "derived") : escapeHtml(name)}</div>
             <div class="meta">${escapeHtml(note)}</div>
+            ${explanation}
             ${coefNsNote(item)}
           </div>
           <span class="badge">${Number(value).toFixed(name === "GPS" || name === "SOFA" ? 0 : name === "sCAR" ? 3 : 1)}</span>
@@ -1692,7 +1825,7 @@
         `施設: ${settings.facility || "未設定"}`,
         `疾患: ${disease}`,
         ...(currentDisease() === "cancer" ? [`がん種: ${subtype}`] : []),
-        `Risk score: ${score}`,
+        `リスクスコア: ${score}`,
         ...Object.entries(d)
           .filter(([, v]) => v !== null && v !== undefined)
           .map(([k, v]) => `${k}: ${Number(v).toFixed(k === "GPS" || k === "SOFA" ? 0 : 1)}`)
@@ -1897,6 +2030,12 @@
       }
       const caseTarget = event.target.closest("[data-case-id]");
       if (caseTarget) applyCase(caseTarget.dataset.caseId);
+      const diseaseToggleTarget = event.target.closest("[data-disease-toggle]");
+      if (diseaseToggleTarget) {
+        const diseaseId = diseaseToggleTarget.dataset.diseaseToggle;
+        expandedDiseasePanel = expandedDiseasePanel === diseaseId ? null : diseaseId;
+        renderDiseasePanelCards();
+      }
     });
 
     document.addEventListener("keydown", (event) => {
@@ -1959,7 +2098,7 @@
 	    });
   </script>
 <script src="./config_loader.js"></script>
-<script>document.addEventListener("DOMContentLoaded",()=>CDSS.loadCDSSConfig("./config").then(()=>console.log("CDSS config ready",CDSS.CONFIG)));</script>
+<script>document.addEventListener("DOMContentLoaded",()=>CDSS.loadCDSSConfig("./04_CDSS/config").then(()=>console.log("CDSS config ready",CDSS.CONFIG)));</script>
 <script>
   (() => {
     window.CDSS = window.CDSS || {};
@@ -2180,8 +2319,8 @@
         if (circularityEl) circularityEl.textContent = metrics.circularity === null ? "--" : `CI ${metrics.circularity.toFixed(3)}`;
         if (areaEl) areaEl.textContent = metrics.area === null ? "--" : `Area ${metrics.area.toFixed(3)}`;
         if (noteEl) {
-          const riskText = Number.isFinite(Number(score)) ? `Risk score ${score}. ` : "";
-          noteEl.textContent = `${riskText}${disease || "selected disease"} radar prototype. CI uses 4πA/P²; Area is normalized polygon fill. NLR/SII 可視化参考値, not Cox predictors.`;
+          const riskText = Number.isFinite(Number(score)) ? `リスクスコア ${score}。` : "";
+          noteEl.textContent = `${riskText}${diseaseName(disease) || "選択疾患"}の検査値プロファイルを示す補助可視化です。均衡指数と異常面積指数は予後確率・Cox予測スコアではありません。NLR/SII は可視化参考値であり、Cox予測モデルの構成因子ではありません。`;
         }
         drawFallback(canvas, labels, radarValues);
         ensureChartJs()
@@ -2210,7 +2349,7 @@
                   <div class="radar-demo-note">※ 均衡指数は検査値プロファイルの形状均衡性を示す補助指標です。<br>予後確率・Cox予測スコアとは独立しており、臨床判断の主指標ではありません。</div>
                 </div>
                 <div class="radar-demo-metric">
-                  <div class="radar-demo-metric-label">Radar Area Index / 異常面積指数</div>
+                  <div class="radar-demo-metric-label">異常面積指数（Radar Area）</div>
                   <div class="radar-demo-score" data-radar-area>--</div>
                 </div>
               </div>

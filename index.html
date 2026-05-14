@@ -410,6 +410,7 @@
       items: [
         { id: "lactate", name_jp: "乳酸", category_jp: "血液ガス", unit: "mmol/L", ref_low: 0.5, ref_high: 2.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], "info": "【乳酸】組織低灌流・嫌気性代謝の指標。>2.0 mmol/L で予後不良。MIMIC-IV Cox β=0.10〜0.25（全6疾患p<0.05）。", high_text: "組織低灌流や重症感染を示唆します。", low_text: "基準下限未満です。" },
         { id: "albumin", name_jp: "アルブミン", category_jp: "生化学", unit: "g/dL", ref_low: 3.5, ref_high: 5.0, tier: 1, enabled: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], "info": "【アルブミン】栄養状態・炎症・予備能の統合指標。<3.5 g/dL で予後不良。全6疾患で死亡リスク増加（HR 0.52〜0.87）。stroke/fracture では p≥0.05（非有意）。", high_text: "脱水などの影響を考慮します。", low_text: "低栄養、炎症、予備能低下を示唆します。" },
+        // sCAR: Simplified Cardiac Arrest Risk (visualization label only)
         { id: "scar", name_jp: "sCAR", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 0.5, tier: 1, enabled: false, derived: true, diseases: ["stroke", "fracture"], "info": "【sCAR: creatinine/albumin】腎機能低下と低栄養・炎症を統合する派生指標。stroke単変量AUC=0.708、fracture単変量AUC=0.8563。fractureはEPV制約により単変量表示を優先。" },
         { id: "nlr", name_jp: "NLR", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 5, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], "info": "【NLR: 好中球/リンパ球比】全身炎症と免疫抑制のバランス指標。>5 で炎症亢進。cardiac/stroke/pneumonia/infection で p<0.05。cancer/fracture は非有意。" },
         { id: "sii", name_jp: "SII", category_jp: "派生指標", unit: "", ref_low: 0, ref_high: 600, tier: 1, enabled: false, derived: true, diseases: ["cardiac", "stroke", "cancer", "pneumonia", "fracture", "infection"], "info": "【SII: 全身免疫炎症指数】血小板×好中球/リンパ球。>600 で高リスク。MIMIC-IV解析では全6疾患でβ≈0（予後独立性なし・参考値として表示）。" },
@@ -1958,7 +1959,7 @@
 	    });
   </script>
 <script src="./config_loader.js"></script>
-<script>document.addEventListener("DOMContentLoaded",()=>CDSS.loadCDSSConfig("./04_CDSS/config").then(()=>console.log("CDSS config ready",CDSS.CONFIG)));</script>
+<script>document.addEventListener("DOMContentLoaded",()=>CDSS.loadCDSSConfig("./config").then(()=>console.log("CDSS config ready",CDSS.CONFIG)));</script>
 <script>
   (() => {
     window.CDSS = window.CDSS || {};
@@ -1974,18 +1975,26 @@
       return Number.isFinite(n) ? n : null;
     };
 
+    const RADAR_NORM_RANGES = {
+      lactate: { label: "Lactate", low: 0.8, high: 5.9, direction: "high" },
+      albumin: { label: "Albumin low", low: 2.4, high: 4.8, direction: "low" },
+      nlr: { label: "NLR", low: 1.09548, high: 22.12, direction: "high" },
+      sii: { label: "SII", low: 147.02, high: 5340.89, direction: "high" },
+      scar: { label: "sCAR", low: 0.143817, high: 1.31624, direction: "high" },
+      gps: { label: "GPS", low: 0, high: 2, direction: "high" }
+    };
+
     function normalizeMetric(key, value) {
       const n = finite(value);
       if (n === null) return null;
-      const specs = {
-        lactate: { label: "Lactate", value: clamp((n / 8) * 100, 0, 100) },
-        albumin: { label: "Albumin low", value: clamp(((4.5 - n) / 2) * 100, 0, 100) },
-        nlr: { label: "NLR", value: clamp((n / 10) * 100, 0, 100) },
-        sii: { label: "SII", value: clamp((n / 2000) * 100, 0, 100) },
-        scar: { label: "sCAR", value: clamp((n / 5) * 100, 0, 100) },
-        gps: { label: "GPS", value: clamp((n / 2) * 100, 0, 100) }
-      };
-      return specs[key] || null;
+      const spec = (CDSS_CONFIG.norm?.markers || RADAR_NORM_RANGES)[key];
+      if (!spec) return null;
+      const span = spec.high - spec.low;
+      if (span <= 0) return null;
+      const valuePct = spec.direction === "low"
+        ? ((spec.high - n) / span) * 100
+        : ((n - spec.low) / span) * 100;
+      return { label: spec.label, value: clamp(valuePct, 0, 100) };
     }
 
     function buildMetrics(values) {

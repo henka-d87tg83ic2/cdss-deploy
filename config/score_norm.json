@@ -1,32 +1,41 @@
 {
-  "cardiac": {
-    "mean": -0.3861,
-    "sd": 0.8249,
-    "n": 33199
-  },
-  "stroke": {
-    "mean": 0.0519,
-    "sd": 0.1834,
-    "n": 7615
-  },
-  "cancer": {
-    "mean": 0.0374,
-    "sd": 0.1612,
-    "n": 6513
-  },
-  "pneumonia": {
-    "mean": 0.1021,
-    "sd": 0.2873,
-    "n": 12154
-  },
-  "fracture": {
-    "mean": 0.0595,
-    "sd": 0.3156,
-    "n": 4504
-  },
-  "infection": {
-    "mean": -0.4445,
-    "sd": 0.9642,
-    "n": 21295
+  "source": "RADAR-TUNING fed4734",
+  "markers": {
+    "lactate": {
+      "label": "Lactate",
+      "low": 0.8,
+      "high": 5.9,
+      "direction": "high"
+    },
+    "albumin": {
+      "label": "Albumin low",
+      "low": 2.4,
+      "high": 4.8,
+      "direction": "low"
+    },
+    "nlr": {
+      "label": "NLR",
+      "low": 1.09548,
+      "high": 22.12,
+      "direction": "high"
+    },
+    "sii": {
+      "label": "SII",
+      "low": 147.02,
+      "high": 5340.89,
+      "direction": "high"
+    },
+    "scar": {
+      "label": "sCAR",
+      "low": 0.143817,
+      "high": 1.31624,
+      "direction": "high"
+    },
+    "gps": {
+      "label": "GPS",
+      "low": 0,
+      "high": 2,
+      "direction": "high"
+    }
   }
 }

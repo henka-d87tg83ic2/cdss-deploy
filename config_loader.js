@@ -1,13 +1,18 @@
 // config_loader.js / SSoT: 04_CDSS/config/*
-const CDSS_CONFIG = { calibration:null, thresholds:null, panels:null, ready:false };
+const CDSS_CONFIG = { calibration:null, thresholds:null, panels:null, norm:null, ready:false };
 
 async function loadCDSSConfig(base='./config') {
-  const [cal, thr, pan] = await Promise.all([
+  const [cal, thr, pan, nrm] = await Promise.all([
     fetch(`${base}/calibration_map.json`).then(r=>r.json()),
     fetch(`${base}/thresholds.json`).then(r=>r.json()),
-    fetch(`${base}/disease_panels.json`).then(r=>r.json())
+    fetch(`${base}/disease_panels.json`).then(r=>r.json()),
+    fetch(`${base}/score_norm.json`).then(r=>r.json())
   ]);
-  Object.assign(CDSS_CONFIG, { calibration:cal, thresholds:thr, panels:pan, ready:true });
+  Object.assign(CDSS_CONFIG, {
+    calibration:cal, thresholds:thr, panels:pan,
+    norm:nrm,
+    ready:true
+  });
   return CDSS_CONFIG;
 }
 

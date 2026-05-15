@@ -75,6 +75,14 @@
     .explain-box { display: grid; gap: 6px; padding: 10px; border: 1px solid rgba(147, 164, 183, 0.24); border-radius: 7px; background: rgba(147, 164, 183, 0.07); color: #c8d7e8; font-size: 12px; line-height: 1.45; }
     .explain-box.patient { border-color: rgba(47, 209, 124, 0.26); background: rgba(47, 209, 124, 0.08); }
     .explain-title { color: #bfd1e5; font-size: 12px; font-weight: 900; }
+    .mode-switch { display: grid; gap: 7px; margin-bottom: 10px; padding: 10px; border: 1px solid rgba(39, 50, 65, 0.9); border-radius: 8px; background: rgba(14, 22, 33, 0.72); }
+    .mode-switch-label { color: var(--muted); font-size: 11px; font-weight: 900; text-transform: uppercase; }
+    .mode-switch-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mode-switch-button { min-height: 38px; border: 1px solid #34465c; border-radius: 7px; background: #233143; color: var(--text); font-size: 13px; font-weight: 900; }
+    .mode-switch-button.active { border-color: var(--blue); background: var(--blue); color: #06101a; }
+    .mode-switch-button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+    body[data-explain-mode="physician"] [data-mode-section="patient"],
+    body[data-explain-mode="patient"] [data-mode-section="physician"] { display: none !important; }
     .disease-card { display: grid; gap: 12px; padding: 12px; background: rgba(17, 24, 39, 0.96); border: 1px solid var(--line); border-radius: 8px; box-shadow: var(--shadow); }
     .disease-card[hidden] { display: none; }
     .disease-card:focus { outline: 2px solid var(--blue); outline-offset: 2px; }
@@ -186,7 +194,7 @@
     .case-card-meta { margin-top: 6px; color: var(--muted); font-size: 12px; }
   </style>
 </head>
-<body>
+<body data-explain-mode="physician">
   <div class="app">
     <header>
       <div class="topline">
@@ -227,8 +235,16 @@
       <section class="page" id="page-result">
         <div class="section">
           <div class="section-title">疾患別バイオマーカー評価</div>
+          <div class="mode-switch" aria-label="説明表示モード">
+            <div class="mode-switch-label">説明モード</div>
+            <div class="mode-switch-buttons">
+              <button class="mode-switch-button active" type="button" data-explain-mode="physician" aria-pressed="true">医師向け</button>
+              <button class="mode-switch-button" type="button" data-explain-mode="patient" aria-pressed="false">患者・家族向け</button>
+            </div>
+          </div>
           <div class="disease-panel-grid" id="diseasePanelCards"></div>
-          <div class="clinical-disclaimer">推奨表示は入力補助のための情報です。診断確定、検査実施、治療方針、臨床判断の代替を目的とするものではありません。</div>
+          <div class="clinical-disclaimer" data-mode-section="physician">推奨表示は入力補助のための情報です。診断確定、検査実施、治療方針、臨床判断の代替を目的とするものではありません。</div>
+          <div class="clinical-disclaimer" data-mode-section="patient">これは診断ではなく、検査値から体の負担や注意が必要な傾向を整理する補助情報です。説明は主治医や医療者との相談に使うためのものです。</div>
         </div>
         <div class="panel score">
           <div class="meta">リスクスコア</div>
@@ -238,7 +254,7 @@
           <div class="risk-radar-inline" id="riskRadarIntegration"></div>
           <div class="score-z" id="riskZ">Z: --</div>
         </div>
-        <div class="section" id="cancerAnnotationSection" hidden>
+        <div class="section" id="cancerAnnotationSection" data-mode-section="physician" hidden>
           <div class="section-title">がんマーカー注記</div>
           <div class="panel" id="cancerAnnotation"></div>
         </div>
@@ -256,7 +272,7 @@
             <div class="radar-demo-summary">
               <div>
                 <div class="name">Biomarker shape prototype</div>
-                <div class="radar-demo-note" id="radarDemoNote">検査値プロファイルの形状を示す補助可視化です。均衡指数は予後確率・Cox予測スコアではありません。NLR/SII は可視化参考値であり、Cox予測モデルの構成因子ではありません。</div>
+                <div class="radar-demo-note" id="radarDemoNote"><span data-mode-section="physician">検査値プロファイルの形状を示す補助可視化です。均衡指数は予後確率・Cox予測スコアではありません。NLR/SII は可視化参考値であり、Cox予測モデルの構成因子ではありません。</span><span data-mode-section="patient">検査値の偏りを図で整理した補助表示です。高い値や形の偏りは、体に負担がかかっている可能性を示します。</span></div>
               </div>
               <div class="radar-demo-metrics">
                 <div class="radar-demo-metric">
@@ -274,23 +290,23 @@
             </div>
           </div>
         </div>
-        <div class="section" id="cardiacTimelineSection" hidden>
+        <div class="section" id="cardiacTimelineSection" data-mode-section="physician" hidden>
           <div class="section-title">心筋マーカー推移</div>
           <div class="panel" id="cardiacTimeline"></div>
         </div>
-        <div class="section" id="strokeAnnotationSection" hidden>
+        <div class="section" id="strokeAnnotationSection" data-mode-section="physician" hidden>
           <div class="section-title">脳卒中リスク注記</div>
           <div class="panel" id="strokeAnnotation"></div>
         </div>
-        <div class="section" id="pneumoniaAnnotationSection" hidden>
+        <div class="section" id="pneumoniaAnnotationSection" data-mode-section="physician" hidden>
           <div class="section-title">肺炎マーカー注記</div>
           <div class="panel" id="pneumoniaAnnotation"></div>
         </div>
-        <div class="section" id="fractureAnnotationSection" hidden>
+        <div class="section" id="fractureAnnotationSection" data-mode-section="physician" hidden>
           <div class="section-title">骨折マーカー注記</div>
           <div class="panel" id="fractureAnnotation"></div>
         </div>
-        <div class="section" id="infectionAnnotationSection" hidden>
+        <div class="section" id="infectionAnnotationSection" data-mode-section="physician" hidden>
           <div class="section-title">感染症マーカー注記</div>
           <div class="panel" id="infectionAnnotation"></div>
         </div>
@@ -424,6 +440,13 @@
       sCAR: "sCARはcreatinine/albuminで、腎機能低下と低栄養・炎症を合わせて見る派生指標です。疾患カードでは補助説明として扱います。",
       "Radar Area": "異常面積指数はレーダーチャート全体の広がりを示す可視化指標です。予後確率やCoxスコアとは独立しています。",
       Circularity: "均衡指数は検査値プロファイルの形状の偏りを示す補助指標です。臨床判断の主指標ではありません。"
+    };
+    const DERIVED_PATIENT_EXPLANATIONS = {
+      NLR: "白血球の一部のバランスから、炎症や体のストレスの傾向を見る補助表示です。診断を決めるものではありません。",
+      SII: "血小板と白血球の一部を組み合わせ、炎症による体の負担を大まかに見る補助表示です。診断を決めるものではありません。",
+      sCAR: "腎機能と栄養状態に関係する検査値から、循環の負担を見やすくする補助表示です。診断スコアではありません。",
+      "Radar Area": "レーダー図の広がりです。高いほど、複数の検査値で注意が必要な傾向があります。",
+      Circularity: "レーダー図の形の偏りです。丸みに近いほど複数方向の変化、偏りが強いほど一部の検査値の変化が目立ちます。"
     };
     const METRIC_TOOLTIPS = {
       NLR: "好中球÷リンパ球。炎症・感染・ストレス反応の指標。Coxモデル非使用（可視化専用）。",
@@ -565,6 +588,7 @@
 	    let MARKER_PANEL_CONFIG = FALLBACK_MARKER_PANEL_CONFIG;
 	    let COEF_CONFIG = null;
     let expandedDiseasePanel = null;
+    let explainMode = "physician";
 
     const $ = (id) => document.getElementById(id);
     const itemId = (item) => item.id || item.key || item.name || item.name_jp;
@@ -819,7 +843,7 @@
     }
 
     function coefNsNote(item, disease = currentDisease()) {
-      return item?.coef_ns?.includes(disease) ? `<div class="meta ns-note">※ この疾患では統計的非有意（p≥0.05）</div>` : "";
+      return item?.coef_ns?.includes(disease) ? `<div class="meta ns-note" data-mode-section="physician">※ この疾患では統計的非有意（p≥0.05）</div>` : "";
     }
 
     function sofaScore() {
@@ -1316,13 +1340,16 @@
             <div class="disease-card-title">${escapeHtml(name)}</div>
             <span class="badge">入力済み: ${assessment.availableCount}/${assessment.totalCount}</span>
           </div>
-          <div class="explain-box">
+          <div class="explain-box" data-mode-section="physician">
             <div class="explain-title">臨床的意味</div>
             <div>${escapeHtml(explanation.meaning || "疾患別の検査値充足度とリスクシグナルを確認します。")}</div>
+            <div>${escapeHtml(physicianDiseaseCaution(assessment))}</div>
           </div>
-          <div class="explain-box patient">
+          <div class="explain-box patient" data-mode-section="patient">
             <div class="explain-title">患者・家族への説明例</div>
             <div>${escapeHtml(explanation.patient || "この表示は診断名を決めるものではなく、検査値から注意深く見るべき点を整理する補助情報です。")}</div>
+            <div>${escapeHtml(patientDiseaseSummary(assessment))}</div>
+            <div>これは診断ではなく、状態を整理する補助情報です。</div>
           </div>
           <div class="disease-card-summary">
             <div class="disease-summary-box risk">
@@ -1332,7 +1359,8 @@
             <div class="disease-summary-box confidence">
               <div class="disease-summary-label">信頼度</div>
               <div class="disease-summary-value confidence-${confidenceClass}">${escapeHtml(confidenceLabel(assessment.confidence))}</div>
-              <div class="confidence-detail">${escapeHtml(assessment.confidenceReason)}</div>
+              <div class="confidence-detail" data-mode-section="physician">${escapeHtml(assessment.confidenceReason)}</div>
+              <div class="confidence-detail" data-mode-section="patient">${escapeHtml(patientConfidenceSummary(assessment.confidence))}</div>
             </div>
           </div>
           <div class="risk-bar" aria-label="${escapeAttr(name)} risk level">
@@ -1358,7 +1386,7 @@
               <div class="disease-metric-value">${escapeHtml(assessment.primaryStatus)}</div>
             </div>
           </div>
-          <div class="disease-card-lists">
+          <div class="disease-card-lists" data-mode-section="physician">
             <div class="confidence-note">${escapeHtml(CONFIDENCE_EXPLANATION)}</div>
             <div class="explain-box">
               <div class="explain-title">Coxモデル入力と表示専用指標の区別</div>
@@ -1394,6 +1422,28 @@
       if (level === "Moderate") return "mid";
       if (level === "Low") return "low";
       return "mid";
+    }
+
+    function physicianDiseaseCaution(assessment) {
+      const driverText = assessment.drivers.length ? `主な異常入力: ${assessment.drivers.join(" / ")}。` : "明確な異常入力は限定的です。";
+      return `${driverText}表示専用指標はリスク解釈の補助として扱い、診断・治療判断は臨床所見と併せて確認してください。`;
+    }
+
+    function patientDiseaseSummary(assessment) {
+      const riskText = riskLevelLabel(assessment.level);
+      const burdenText = assessment.drivers.length
+        ? "いくつかの検査値に体の負担を示す傾向があります。"
+        : "現在の入力範囲では、強く目立つ負担のサインは限られています。";
+      return `この表示では注意度は「${riskText}」です。${burdenText}`;
+    }
+
+    function patientConfidenceSummary(confidence) {
+      return ({
+        High: "判断材料になる主要な入力があります。",
+        Medium: "一部の入力から傾向を見ています。",
+        Low: "代わりの入力から大まかな傾向を見ています。",
+        Insufficient: "入力が少ないため、参考情報は限られます。"
+      }[confidence] || "入力状況に応じた参考表示です。");
     }
 
     function riskLevelLabel(level) {
@@ -1815,7 +1865,8 @@
     }
 
     function derivedRow(name, value, note, item = null) {
-      const explanation = DERIVED_EXPLANATIONS[name] ? `<div class="meta">${escapeHtml(DERIVED_EXPLANATIONS[name])}</div>` : "";
+      const explanation = DERIVED_EXPLANATIONS[name] ? `<div class="meta" data-mode-section="physician">${escapeHtml(DERIVED_EXPLANATIONS[name])}</div>` : "";
+      const patientExplanation = DERIVED_PATIENT_EXPLANATIONS[name] ? `<div class="meta" data-mode-section="patient">${escapeHtml(DERIVED_PATIENT_EXPLANATIONS[name])}</div>` : "";
       const label = item ? `${markerInfoLink(item, "derived")}${metricTooltip(name)}` : metricLabel(name);
       return `
         <div class="row">
@@ -1823,6 +1874,7 @@
             <div class="name derived">${label}</div>
             <div class="meta">${escapeHtml(note)}</div>
             ${explanation}
+            ${patientExplanation}
             ${coefNsNote(item)}
           </div>
           <span class="badge">${Number(value).toFixed(name === "GPS" || name === "SOFA" ? 0 : name === "sCAR" ? 3 : 1)}</span>

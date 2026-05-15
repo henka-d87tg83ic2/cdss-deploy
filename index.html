@@ -120,6 +120,13 @@
     .radar-demo-metric-label { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
     .radar-demo-score { margin-top: 3px; font-size: 22px; font-weight: 900; color: var(--green); }
     .radar-demo-note { color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .metric-tooltip { position: relative; display: inline-flex; align-items: center; margin-left: 4px; vertical-align: middle; text-transform: none; }
+    .metric-tooltip-trigger { display: inline-grid; place-items: center; width: 18px; height: 18px; border: 0; border-radius: 999px; padding: 0; background: transparent; color: #bfd1e5; font-size: 14px; line-height: 1; font-weight: 900; cursor: pointer; }
+    .metric-tooltip-trigger:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+    .metric-tooltip-bubble { position: absolute; left: 50%; bottom: calc(100% + 8px); z-index: 60; width: max-content; max-width: 260px; transform: translateX(-50%) translateY(4px); padding: 8px 10px; border-radius: 7px; background: #1e293b; color: #fff; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35); font-size: 12px; font-weight: 700; line-height: 1.45; text-align: left; text-transform: none; white-space: normal; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s ease; }
+    .metric-tooltip:hover .metric-tooltip-bubble,
+    .metric-tooltip:focus-within .metric-tooltip-bubble,
+    .metric-tooltip.is-active .metric-tooltip-bubble { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
     .radar-panel-host { margin-top: 12px; }
     .radar-panel-host .radar-demo-panel { box-shadow: none; }
     .risk-radar-inline { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(39, 50, 65, 0.82); }
@@ -253,11 +260,11 @@
               </div>
               <div class="radar-demo-metrics">
                 <div class="radar-demo-metric">
-                  <div class="radar-demo-metric-label">均衡指数（Circularity）</div>
+                  <div class="radar-demo-metric-label">均衡指数（Circularity Index）<span class="metric-tooltip"><button class="metric-tooltip-trigger" type="button" data-tooltip-key="Circularity Index" aria-label="Circularity Indexの説明" aria-expanded="false">ⓘ</button><span class="metric-tooltip-bubble" role="tooltip">4πA/P²。レーダー形状のバランス指標。高値=多方向異常、低値=孤立異常。上限は六角形基準で0.91。</span></span></div>
                   <div class="radar-demo-score" id="radarDemoCircularity">--</div>
                 </div>
                 <div class="radar-demo-metric">
-                  <div class="radar-demo-metric-label">異常面積指数（Radar Area）</div>
+                  <div class="radar-demo-metric-label">異常面積指数（Radar Area）<span class="metric-tooltip"><button class="metric-tooltip-trigger" type="button" data-tooltip-key="Radar Area" aria-label="Radar Areaの説明" aria-expanded="false">ⓘ</button><span class="metric-tooltip-bubble" role="tooltip">レーダーポリゴンの面積。異常値の総量を示す。高いほど複数指標が同時に異常。</span></span></div>
                   <div class="radar-demo-score" id="radarDemoArea">--</div>
                 </div>
               </div>
@@ -417,6 +424,13 @@
       sCAR: "sCARはcreatinine/albuminで、腎機能低下と低栄養・炎症を合わせて見る派生指標です。疾患カードでは補助説明として扱います。",
       "Radar Area": "異常面積指数はレーダーチャート全体の広がりを示す可視化指標です。予後確率やCoxスコアとは独立しています。",
       Circularity: "均衡指数は検査値プロファイルの形状の偏りを示す補助指標です。臨床判断の主指標ではありません。"
+    };
+    const METRIC_TOOLTIPS = {
+      NLR: "好中球÷リンパ球。炎症・感染・ストレス反応の指標。Coxモデル非使用（可視化専用）。",
+      SII: "血小板×好中球÷リンパ球。全身炎症・免疫活性化の複合指標。Coxモデル非使用（可視化専用）。",
+      sCAR: "簡易循環虚脱リスク指標。循環動態の視覚的補助。診断スコアとして未検証。",
+      "Radar Area": "レーダーポリゴンの面積。異常値の総量を示す。高いほど複数指標が同時に異常。",
+      "Circularity Index": "4πA/P²。レーダー形状のバランス指標。高値=多方向異常、低値=孤立異常。上限は六角形基準で0.91。"
     };
     const MODEL_INPUT_LABELS = {
       lactate: "乳酸",
@@ -1224,11 +1238,11 @@
         </div>
         <div class="radar-demo-metrics">
           <div class="radar-demo-metric">
-            <div class="radar-demo-metric-label">均衡指数（Circularity）</div>
+            <div class="radar-demo-metric-label">均衡指数（Circularity Index）${metricTooltip("Circularity Index")}</div>
             <div class="radar-demo-score">${metrics.circularity === null ? "--" : `C ${escapeHtml(metrics.circularity.toFixed(3))}`}</div>
           </div>
           <div class="radar-demo-metric">
-            <div class="radar-demo-metric-label">異常面積指数（Radar Area）</div>
+            <div class="radar-demo-metric-label">異常面積指数（Radar Area）${metricTooltip("Radar Area")}</div>
             <div class="radar-demo-score">${metrics.area === null ? "--" : `面積 ${escapeHtml(metrics.area.toFixed(3))}`}</div>
           </div>
         </div>
@@ -1802,10 +1816,11 @@
 
     function derivedRow(name, value, note, item = null) {
       const explanation = DERIVED_EXPLANATIONS[name] ? `<div class="meta">${escapeHtml(DERIVED_EXPLANATIONS[name])}</div>` : "";
+      const label = item ? `${markerInfoLink(item, "derived")}${metricTooltip(name)}` : metricLabel(name);
       return `
         <div class="row">
           <div class="label">
-            <div class="name derived">${item ? markerInfoLink(item, "derived") : escapeHtml(name)}</div>
+            <div class="name derived">${label}</div>
             <div class="meta">${escapeHtml(note)}</div>
             ${explanation}
             ${coefNsNote(item)}
@@ -1962,6 +1977,24 @@
       return escapeHtml(value);
     }
 
+    function metricTooltip(key) {
+      const text = METRIC_TOOLTIPS[key];
+      if (!text) return "";
+      return `<span class="metric-tooltip"><button class="metric-tooltip-trigger" type="button" data-tooltip-key="${escapeAttr(key)}" aria-label="${escapeAttr(key)}の説明" aria-expanded="false">ⓘ</button><span class="metric-tooltip-bubble" role="tooltip">${escapeHtml(text)}</span></span>`;
+    }
+
+    function metricLabel(label, tooltipKey = label) {
+      return `${escapeHtml(label)}${metricTooltip(tooltipKey)}`;
+    }
+
+    function closeMetricTooltips(except = null) {
+      document.querySelectorAll(".metric-tooltip.is-active").forEach((tooltip) => {
+        if (tooltip === except) return;
+        tooltip.classList.remove("is-active");
+        tooltip.querySelector(".metric-tooltip-trigger")?.setAttribute("aria-expanded", "false");
+      });
+    }
+
     function registerServiceWorker() {
       if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
       const sw = `
@@ -2018,6 +2051,19 @@
     });
 
     document.addEventListener("click", (event) => {
+      const tooltipTarget = event.target.closest("[data-tooltip-key]");
+      if (tooltipTarget) {
+        event.preventDefault();
+        const tooltip = tooltipTarget.closest(".metric-tooltip");
+        const isActive = tooltip?.classList.contains("is-active");
+        closeMetricTooltips(tooltip);
+        if (tooltip) {
+          tooltip.classList.toggle("is-active", !isActive);
+          tooltipTarget.setAttribute("aria-expanded", String(!isActive));
+        }
+        return;
+      }
+      closeMetricTooltips();
       const infoTarget = event.target.closest("[data-info-id]");
       if (infoTarget) showInfoModal(infoTarget.dataset.infoId);
       if (event.target.id === "infoModal" || event.target.id === "infoModalClose") closeInfoModal();
@@ -2040,6 +2086,7 @@
 
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
+        closeMetricTooltips();
         closeInfoModal();
         closeCaseModal();
       }
@@ -2343,13 +2390,13 @@
               </div>
               <div class="radar-demo-metrics">
                 <div class="radar-demo-metric">
-                  <div class="radar-demo-metric-label">均衡指数 (C)</div>
+                  <div class="radar-demo-metric-label">均衡指数（Circularity Index）${metricTooltip("Circularity Index")}</div>
                   <div class="radar-demo-score" data-radar-circularity>--</div>
                   <div class="radar-demo-note" data-radar-circularity-label></div>
                   <div class="radar-demo-note">※ 均衡指数は検査値プロファイルの形状均衡性を示す補助指標です。<br>予後確率・Cox予測スコアとは独立しており、臨床判断の主指標ではありません。</div>
                 </div>
                 <div class="radar-demo-metric">
-                  <div class="radar-demo-metric-label">異常面積指数（Radar Area）</div>
+                  <div class="radar-demo-metric-label">異常面積指数（Radar Area）${metricTooltip("Radar Area")}</div>
                   <div class="radar-demo-score" data-radar-area>--</div>
                 </div>
               </div>

@@ -2118,26 +2118,44 @@
     function registerServiceWorker() {
       if (!("serviceWorker" in navigator) || location.protocol === "file:") return;
       const sw = `
-	        const CACHE = "cdss-html-v3";
-	        self.addEventListener("install", (event) => {
-	          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(["./", "cdss.html", "lab_master_v1.json", "config/coef_map.json", "04_CDSS/config/marker_strength.json", "cdss/score_norm.json", "${CASES_PUBLIC_URL}"]).catch(() => undefined)));
+        const CACHE = "cdss-html-r020-v1";
+        const OPTIONAL_CACHE_URLS = ["04_CDSS/config/marker_strength.json"];
+        const PROTECTED_JSON_PATTERNS = [
+          /\/config\/coef_map\.json$/,
+          /\/config\/thresholds\.json$/,
+          /\/config\/score_norm\.json$/,
+          /\/case_pack\/cases_public\.json$/,
+          /\/case_pack\/cases_answer\.json$/,
+          /\/cdss\/lab_master_v1\.json$/,
+          /\/lab_master_v1\.json$/
+        ];
+        function isProtectedJson(url) {
+          return PROTECTED_JSON_PATTERNS.some((pattern) => pattern.test(url.pathname));
+        }
+        self.addEventListener("install", (event) => {
+          event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(OPTIONAL_CACHE_URLS).catch(() => undefined)));
           self.skipWaiting();
         });
         self.addEventListener("activate", (event) => {
-          event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))));
-          self.clients.claim();
+          event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE).map((key) => caches.delete(key)))).then(() => self.clients.claim()));
         });
         self.addEventListener("fetch", (event) => {
           if (event.request.method !== "GET") return;
-          event.respondWith(caches.match(event.request).then((cached) => cached || fetch(event.request).then((response) => {
+          const url = new URL(event.request.url);
+          if (isProtectedJson(url)) {
+            event.respondWith(fetch(event.request, { cache: "no-store" }));
+            return;
+          }
+          event.respondWith(fetch(event.request).then((response) => {
+            if (!response || response.status !== 200 || response.type === "opaque") return response;
             const clone = response.clone();
             caches.open(CACHE).then((cache) => cache.put(event.request, clone));
             return response;
-          }).catch(() => cached)));
+          }).catch(() => caches.match(event.request)));
         });
       `;
       const url = URL.createObjectURL(new Blob([sw], { type: "text/javascript" }));
-      navigator.serviceWorker.register(url).catch(() => undefined);
+      navigator.serviceWorker.register(url, { scope: "./" }).catch(() => undefined);
     }
 
     document.addEventListener("input", (event) => {

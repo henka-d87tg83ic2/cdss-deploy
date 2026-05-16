@@ -1,17 +1,27 @@
-const CACHE = 'cdss-cache-v5';
+const CACHE = 'cdss-cache-r020-v1';
 const STATIC_ASSETS = [
   '/',
   '/cdss.html',
   '/config_loader.js',
-  '/config/thresholds.json',
   '/config/calibration_map.json',
   '/config/disease_panels.json',
-  '/config/score_norm.json',
-  './config/score_norm.json',
   '/config/marker_strength.json',
   'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js'
 ];
 const NETWORK_FIRST = ['/predict'];
+const PROTECTED_JSON_PATTERNS = [
+  /\/config\/coef_map\.json$/,
+  /\/config\/thresholds\.json$/,
+  /\/config\/score_norm\.json$/,
+  /\/case_pack\/cases_public\.json$/,
+  /\/case_pack\/cases_answer\.json$/,
+  /\/cdss\/lab_master_v1\.json$/,
+  /\/lab_master_v1\.json$/
+];
+
+function isProtectedJson(url) {
+  return PROTECTED_JSON_PATTERNS.some(pattern => pattern.test(url.pathname));
+}
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -31,6 +41,11 @@ self.addEventListener('activate', event => {
 
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
+
+  if (isProtectedJson(url)) {
+    event.respondWith(fetch(event.request, { cache: 'no-store' }));
+    return;
+  }
 
   if (NETWORK_FIRST.some(path => url.pathname.startsWith(path))) {
     event.respondWith(

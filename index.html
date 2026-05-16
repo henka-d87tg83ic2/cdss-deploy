@@ -587,8 +587,17 @@
 	    let caseBannerTimer = null;
 	    let MARKER_PANEL_CONFIG = FALLBACK_MARKER_PANEL_CONFIG;
 	    let COEF_CONFIG = null;
+    let CDSS_CONFIG = { coefMap: null, thresholds: null, scoreNorm: null, labMaster: null, ready: false, errors: [], paths: {}, norm: null };
     let expandedDiseasePanel = null;
     let explainMode = "physician";
+
+    const RUNTIME_CONFIG_CANDIDATES = {
+      coefMap: ["04_CDSS/config/coef_map.json", "config/coef_map.json"],
+      thresholds: ["04_CDSS/config/thresholds.json", "config/thresholds.json"],
+      scoreNorm: ["04_CDSS/config/score_norm.json", "config/score_norm.json", "cdss/score_norm.json"],
+      labMaster: ["04_CDSS/config/lab_master_v1.json", "lab_master_v1.json", "cdss/lab_master_v1.json"]
+    };
+    window.CDSS_CONFIG = CDSS_CONFIG;
 
     const $ = (id) => document.getElementById(id);
     const itemId = (item) => item.id || item.key || item.name || item.name_jp;
@@ -597,12 +606,55 @@
     const itemUnit = (item) => item.unit || "";
     const itemTier = (item) => Number(item.tier || 1);
 
-	    async function loadCoefMap() {
-	      const res = await fetch("config/coef_map.json", { cache: "no-store" });
-	      if (!res.ok) throw new Error(`coef_map.json HTTP ${res.status}`);
-	      const config = await res.json();
-	      validateCoefConfig(config);
-	      COEF_CONFIG = config;
+	    async function fetchFirstJson(label, paths, { required = true } = {}) {
+	      const errors = [];
+	      for (const path of paths) {
+	        try {
+	          const res = await fetch(path, { cache: "no-store" });
+	          if (!res.ok) {
+	            errors.push(`${path}: HTTP ${res.status}`);
+	            continue;
+	          }
+	          return { path, data: await res.json() };
+	        } catch (e) {
+	          errors.push(`${path}: ${e.message}`);
+	        }
+	      }
+	      if (required) throw new Error(`${label} load failed (${errors.join("; ")})`);
+	      return { path: null, data: null, errors };
+	    }
+
+	    async function loadRuntimeConfig() {
+	      const [coef, thresholds, norm, labMaster] = await Promise.all([
+	        fetchFirstJson("coef_map.json", RUNTIME_CONFIG_CANDIDATES.coefMap),
+	        fetchFirstJson("thresholds.json", RUNTIME_CONFIG_CANDIDATES.thresholds),
+	        fetchFirstJson("score_norm.json", RUNTIME_CONFIG_CANDIDATES.scoreNorm),
+	        fetchFirstJson("lab_master_v1.json", RUNTIME_CONFIG_CANDIDATES.labMaster, { required: false })
+	      ]);
+	      validateCoefConfig(coef.data);
+	      validateThresholdConfig(thresholds.data);
+	      validateScoreNormConfig(norm.data);
+	      COEF_CONFIG = coef.data;
+	      scoreNorm = norm.data || {};
+	      if (labMaster.data) master = normalizeMaster(labMaster.data);
+	      CDSS_CONFIG = {
+	        coefMap: coef.data,
+	        thresholds: thresholds.data,
+	        scoreNorm: norm.data,
+	        labMaster: labMaster.data,
+	        ready: true,
+	        errors: labMaster.errors || [],
+	        paths: {
+	          coefMap: coef.path,
+	          thresholds: thresholds.path,
+	          scoreNorm: norm.path,
+	          labMaster: labMaster.path
+	        },
+	        norm: norm.data
+	      };
+	      window.CDSS_CONFIG = CDSS_CONFIG;
+	      installRuntimeConfigApi();
+	      return CDSS_CONFIG;
 	    }
 
 	    function validateCoefConfig(config) {
@@ -627,19 +679,35 @@
 	      });
 	    }
 
+    function validateThresholdConfig(config) {
+      if (!config || typeof config !== "object") throw new Error("thresholds.json invalid");
+      if (!config.meta || typeof config.meta !== "object") throw new Error("thresholds.json missing meta");
+      if (!Object.prototype.hasOwnProperty.call(config, "thresholds")) throw new Error("thresholds.json missing thresholds");
+      if (config.meta?.policy?.score_norm_is_not_threshold_source !== true) throw new Error("thresholds.json policy must separate score_norm");
+    }
+
+    function validateScoreNormConfig(config) {
+      if (!config || typeof config !== "object") throw new Error("score_norm.json invalid");
+      if (!config.markers || typeof config.markers !== "object") throw new Error("score_norm.json missing markers");
+      Object.entries(config.markers).forEach(([key, spec]) => {
+        if (typeof spec?.low !== "number" || typeof spec?.high !== "number") throw new Error(`score_norm invalid marker ${key}`);
+        if (spec.high <= spec.low) throw new Error(`score_norm invalid range ${key}`);
+      });
+    }
+
+    function installRuntimeConfigApi() {
+      window.CDSS = window.CDSS || {};
+      window.CDSS.CONFIG = CDSS_CONFIG;
+      window.CDSS.getRuntimeConfigStatus = () => ({
+        ready: CDSS_CONFIG.ready === true,
+        paths: { ...CDSS_CONFIG.paths },
+        labMasterStatus: CDSS_CONFIG.labMaster ? "loaded" : "missing_expected"
+      });
+    }
+
     async function loadMaster() {
-      try {
-        const res = await fetch("lab_master_v1.json", { cache: "no-store" });
-        if (res.ok) master = normalizeMaster(await res.json());
-      } catch (_) {
-        master = normalizeMaster(DEFAULT_MASTER);
-      }
-      try {
-        const normRes = await fetch("cdss/score_norm.json", { cache: "no-store" });
-        if (normRes.ok) scoreNorm = await normRes.json();
-      } catch (e) {
-        console.warn("score_norm.json load failed", e);
-      }
+      if (!CDSS_CONFIG.labMaster) master = normalizeMaster(DEFAULT_MASTER);
+      if (CDSS_CONFIG.scoreNorm) scoreNorm = CDSS_CONFIG.scoreNorm;
       settings = loadSettings();
       renderAll();
       registerServiceWorker();
@@ -2184,9 +2252,11 @@
 
 	    document.addEventListener("DOMContentLoaded", async () => {
 	      try {
-	        await loadCoefMap();
+	        await loadRuntimeConfig();
 	      } catch (e) {
-	        console.warn("coef_map.json load failed; scoring is disabled:", e);
+	        console.warn("runtime config load failed; scoring is disabled:", e);
+	        showConfigError(e.message);
+	        return;
 	      }
 	      try {
 	        await loadMarkerStrengthConfig();
@@ -2196,8 +2266,6 @@
 	      }
 	    });
   </script>
-<script src="./config_loader.js"></script>
-<script>document.addEventListener("DOMContentLoaded",()=>CDSS.loadCDSSConfig("./04_CDSS/config").then(()=>console.log("CDSS config ready",CDSS.CONFIG)));</script>
 <script>
   (() => {
     window.CDSS = window.CDSS || {};
